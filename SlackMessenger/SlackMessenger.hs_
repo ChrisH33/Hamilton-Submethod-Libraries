@@ -1,0 +1,18 @@
+
+// this ALWAYS GENERATED file contains the sub-method library header
+// Generated at 07/08/2025 16:20:52
+
+#pragma once
+#ifndef HSL_RUNTIME
+namespace SLACKMESSENGER {
+function _InitLibrary() { }
+function _ExitLibrary() { }
+function Start_Check( device & ML_STAR, variable _strSlackDirectory ) variable {  return (0); }
+function Update( device & ML_STAR, variable _strSlackDirectory, variable _strStart_Check, variable _intState ) void { }
+} // namespace
+#endif
+
+#ifdef HSL_RUNTIME
+#include __filename__ ".hsi"
+#endif
+// $$author=ch33$$valid=0$$time=2025-08-07 16:20$$checksum=76cb2686$$length=081$$

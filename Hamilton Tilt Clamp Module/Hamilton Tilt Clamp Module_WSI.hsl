@@ -1,0 +1,845 @@
+//***********************************************************************************************************************
+//*    _    _                 _ _ _                _____       _           _   _                                         
+//*   | |  | |               (_) | |              |  __ \     | |         | | (_)                                        
+//*   | |__| | __ _ _ __ ___  _| | |_ ___  _ __   | |__) |___ | |__   ___ | |_ _  ___ ___                                
+//*   |  __  |/ _` | '_ ` _ \| | | __/ _ \| '_ \  |  _  // _ \| '_ \ / _ \| __| |/ __/ __|                               
+//*   | |  | | (_| | | | | | | | | || (_) | | | | | | \ \ (_) | |_) | (_) | |_| | (__\__ \                               
+//*   |_|  |_|\__,_|_| |_| |_|_|_|\__\___/|_| |_| |_|  \_\___/|_.__/ \___/ \__|_|\___|___/                               
+//*                                                                                                                      
+//*
+//*   HSL driver to control a Hamilton tilt clamp module
+//*
+//*   Copyright (C) by HAMILTON Bonaduz AG, CH-7402 Bonaduz.
+//*   All rights reserved.
+//*
+//***********************************************************************************************************************
+//*
+//*   Revision History:
+//*
+//*   2022-02-14    v1.0    JMagnin            - created
+//*   2024-12-03    v1.1    CHenderson         - Added a pause in the sway step
+
+//* 
+//***********************************************************************************************************************
+
+#ifndef __Hamilton_Tilt_Clamp_Module_hsl__
+  #define __Hamilton_Tilt_Clamp_Module_hsl__  1
+
+  #ifndef __TraceLevel_hsl__
+    #include "ASWStandard\\TraceLevel\\TraceLevel.hsl"
+  #endif
+
+  #ifndef __ASWGLOBAL_hsl__
+    #include "ASWStandard\\ASWGlobal\\ASWGlobal.hsl"
+  #endif
+
+  #ifndef __Hamilton_DriverTools_hsl__
+    #include "Hamilton DriverTools\\Hamilton DriverTools.hsl"
+  #endif
+
+  #ifndef __Hamilton_MFX_2_0_Interface_hsl__
+    #include "Hamilton MFX 2.0 Interface\\Hamilton MFX 2.0 Interface.hsl"
+  #endif
+
+  namespace Hamilton_Tilt_Clamp_Module
+  {
+    //-------------------------------------------------------------------------------------------------------------------------
+    // private declarations
+    //-------------------------------------------------------------------------------------------------------------------------
+
+    const static variable SPEED_MIN                                                     (1);
+    const static variable SPEED_MAX                                                     (10);
+
+    const static variable ANGLE_MIN                                                     (0);
+    const static variable ANGLE_MAX                                                     (10);
+
+    const static variable TIMEOUT_SHORT                                                 (5.0);
+    const static variable TIMEOUT_LONG                                                  (60.0);
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    // global declarations
+    //-------------------------------------------------------------------------------------------------------------------------
+    static global variable gHamilton_Tilt_Clamp_Module_intTraceLevel                      (TRACE_LEVEL_DEBUG);
+    static global variable gHamilton_Tilt_Clamp_Module_blnLibraryInitialized              (hslFalse);
+    static global variable gHamilton_Tilt_Clamp_Module_strLibraryName                     ("Hamilton Tilt Clamp Module");
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    // function declarations
+    //-------------------------------------------------------------------------------------------------------------------------
+    function Initialize(variable i_intPort,
+                        variable i_strModuleName,
+                        variable i_blnSimulationMode,
+                        variable i_blnCommunicationTrace,
+                        variable& o_intModuleID) variable;
+
+    function SetTraceLevel(variable i_intModuleID,
+                           variable i_intTraceLevel) variable;
+
+    function Terminate(variable i_intModuleID) variable;
+
+    function ClampOpen(variable i_intModuleID) variable;
+
+    function ClampClose(variable i_intModuleID) variable;
+
+    function Tilt(variable i_intModuleID,
+                  variable i_intSpeed,
+                  variable i_intAngle) variable;
+
+    function Sway(variable i_intModuleID,
+                  variable i_intCycleNumber,
+                  variable i_intSpeed,
+                  variable i_intStartAngle,
+                  variable i_intSwayAngle,
+                  variable i_intEndAngle) variable;
+
+    function Sway_WSI(variable i_intModuleID,
+                      variable i_intCycleNumber,
+                      variable i_intSpeed,
+                      variable i_intStartAngle,
+                      variable i_intSwayAngle,
+                      variable i_intEndAngle,
+                      variable i_intPause) variable;
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    // private function declarations
+    //-------------------------------------------------------------------------------------------------------------------------
+    private function _Initialized(variable i_intModuleID,
+                                  variable i_strCallingFunctionName) variable;
+
+    private function _Tilt(variable i_intModuleID,
+                           variable i_intSpeed,
+                           variable i_intAngle,
+                           variable i_strCallingFunctionName) variable;
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    // function Initialize
+    //-------------------------------------------------------------------------------------------------------------------------
+    function Initialize(variable i_intPort,
+                        variable i_strModuleName,
+                        variable i_blnSimulationMode,
+                        variable i_blnCommunicationTrace,
+                        variable& o_intModuleID) variable
+    {
+      variable blnFunctionSuccess(hslTrue);
+      variable arrStrCommands[](0), arrStrResponses[](0), arrFltTimeouts[](0), arrStrErrorCodes[](0);
+      string strTemp("");
+      variable strFunctionName("Initialize");
+
+      if(Hamilton_DriverTools::CheckIntegerRange(i_intPort,
+                                                 "i_intPort",
+                                                 Hamilton_MFX_2_0_Interface::PORT_MIN,
+                                                 Hamilton_MFX_2_0_Interface::PORT_MAX,
+                                                 strFunctionName,
+                                                 gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      if(Hamilton_DriverTools::CheckBool(i_blnSimulationMode,
+                                         "i_blnSimulationMode",
+                                         strFunctionName,
+                                         gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      if(Hamilton_DriverTools::CheckBool(i_blnCommunicationTrace,
+                                         "i_blnCommunicationTrace",
+                                         strFunctionName,
+                                         gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      if(Hamilton_DriverTools::CheckString(i_strModuleName,
+                                           "i_strModuleName",
+                                           strFunctionName,
+                                           gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      if(i_intPort == -1)
+      {
+        if(Hamilton_DriverTools::CheckStringLength(i_strModuleName,
+                                                   "i_strModuleName",
+                                                   4,
+                                                   4,
+                                                   strFunctionName,
+                                                   gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+      }
+
+      if(i_intPort == 0)
+      {
+        if(Hamilton_DriverTools::CheckStringLength(i_strModuleName,
+                                                   "i_strModuleName",
+                                                   2,
+                                                   2,
+                                                   strFunctionName,
+                                                   gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+      }
+
+      if(!gHamilton_Tilt_Clamp_Module_blnLibraryInitialized) gHamilton_Tilt_Clamp_Module_intTraceLevel = TRACELEVEL::GetTraceLevel();
+
+      Hamilton_DriverTools::StatusTrace(Hamilton_DriverTools::ACTION::START,
+                                        TRACE_LEVEL_DEBUG,
+                                        "i_intPort = " + IStr(i_intPort) +
+                                        ", i_strModuleName = '" + i_strModuleName + "'" +
+                                        ", i_blnSimulationMode = " + IStr(i_blnSimulationMode) +
+                                        ", i_blnCommunicationTrace = " + IStr(i_blnCommunicationTrace),
+                                        strFunctionName,
+                                        gHamilton_Tilt_Clamp_Module_intTraceLevel,
+                                        gHamilton_Tilt_Clamp_Module_strLibraryName);
+
+      arrStrCommands.AddAsLast("QTbt0");
+
+      arrFltTimeouts.AddAsLast(TIMEOUT_SHORT);
+
+      arrStrResponses.AddAsLast("QTer00qt\"10144594/80/00000150\" - simulated -");
+
+      if(Hamilton_MFX_2_0_Interface::InitializeModule(i_intPort,
+                                                      i_strModuleName,
+                                                      i_blnSimulationMode,
+                                                      i_blnCommunicationTrace,
+                                                      arrStrCommands,
+                                                      arrFltTimeouts,
+                                                      arrStrResponses,
+                                                      arrStrErrorCodes,
+                                                      o_intModuleID,
+                                                      strFunctionName,
+                                                      gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return (ASWGLOBAL::BOOL::FALSE);
+
+      // check, if we are connected to a tilt clamp module by product number
+      strTemp = arrStrResponses.GetAt(0);
+
+      if(strTemp.Find("10144594") == -1)
+      {
+        Hamilton_DriverTools::StatusTrace(Hamilton_DriverTools::ACTION::COMPLETE_WITH_ERROR,
+                                          TRACE_LEVEL_RELEASE,
+                                          "Connected to wrong module, technical information of connected module = '" + arrStrResponses.GetAt(0) + "' !",
+                                          strFunctionName,
+                                          gHamilton_Tilt_Clamp_Module_intTraceLevel,
+                                          gHamilton_Tilt_Clamp_Module_strLibraryName);
+
+        blnFunctionSuccess = hslFalse;
+      }
+      else
+      {
+        arrStrCommands.SetAt(0, "OCoc0op\"1100\"");
+        arrStrCommands.AddAsLast("RD");
+        arrStrCommands.AddAsLast("XIxs-120xv50xr1");
+
+        arrFltTimeouts.SetAt(0, TIMEOUT_SHORT);
+        arrFltTimeouts.AddAsLast(TIMEOUT_SHORT);
+        arrFltTimeouts.AddAsLast(TIMEOUT_LONG);
+
+        arrStrResponses.SetAt(0, "OCer00 - simulated -");
+        arrStrResponses.AddAsLast("RDer00rd1 1 0 0 - simulated -");
+        arrStrResponses.AddAsLast("XIer00 - simulated -");
+
+        if(Hamilton_MFX_2_0_Interface::SendCommands(o_intModuleID,
+                                                    arrStrCommands,
+                                                    arrFltTimeouts,
+                                                    arrStrResponses,
+                                                    arrStrErrorCodes,
+                                                    strFunctionName,
+                                                    gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) blnFunctionSuccess = hslFalse;
+
+        strTemp = arrStrResponses.GetAt(1);
+
+        if(strTemp.Find("rd1 1 0 0") == -1)
+        {
+          Hamilton_DriverTools::StatusTrace(Hamilton_DriverTools::ACTION::COMPLETE_WITH_ERROR,
+                                        TRACE_LEVEL_RELEASE,
+                                        "Error with the clamp status, current status is = '" + arrStrResponses.GetAt(1) + "' !",
+                                        strFunctionName,
+                                        gHamilton_Tilt_Clamp_Module_intTraceLevel,
+                                        gHamilton_Tilt_Clamp_Module_strLibraryName);
+
+          blnFunctionSuccess = hslFalse;
+        }
+
+      }
+
+      if(!blnFunctionSuccess)
+      {
+        arrStrCommands.SetSize(0);
+        arrFltTimeouts.SetSize(0);
+        arrStrResponses.SetSize(0);
+
+        Hamilton_MFX_2_0_Interface::TerminateModule(o_intModuleID,
+                                                    arrStrCommands,
+                                                    arrFltTimeouts,
+                                                    arrStrResponses,
+                                                    arrStrErrorCodes,
+                                                    strFunctionName,
+                                                    gHamilton_Tilt_Clamp_Module_strLibraryName);
+
+        return(ASWGLOBAL::BOOL::FALSE);
+      }
+
+      gHamilton_Tilt_Clamp_Module_blnLibraryInitialized = hslTrue;
+
+      Hamilton_DriverTools::StatusTrace(Hamilton_DriverTools::ACTION::COMPLETE,
+                                        TRACE_LEVEL_DEBUG,
+                                        "o_intModuleID = " + IStr(o_intModuleID),
+                                        strFunctionName,
+                                        gHamilton_Tilt_Clamp_Module_intTraceLevel,
+                                        gHamilton_Tilt_Clamp_Module_strLibraryName);
+
+      return(ASWGLOBAL::BOOL::TRUE);
+    } // Initialize
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    // function Terminate
+    //-------------------------------------------------------------------------------------------------------------------------
+    function Terminate(variable i_intModuleID) variable
+    {
+      variable arrStrCommands[], arrStrResponses[], arrFltTimeouts[], arrStrErrorCodes[];
+      variable strFunctionName("");
+      string strTemp("Terminate");
+
+      if(Hamilton_DriverTools::CheckIntegerRange(i_intModuleID,
+                                                 "i_intModuleID",
+                                                 Hamilton_MFX_2_0_Interface::MODULE_ID_MIN,
+                                                 Hamilton_MFX_2_0_Interface::MODULE_ID_MAX,
+                                                 strFunctionName,
+                                                 gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      Hamilton_DriverTools::StatusTrace(Hamilton_DriverTools::ACTION::START,
+                                        TRACE_LEVEL_DEBUG,
+                                        "i_intModuleID = " + IStr(i_intModuleID),
+                                        strFunctionName,
+                                        gHamilton_Tilt_Clamp_Module_intTraceLevel,
+                                        gHamilton_Tilt_Clamp_Module_strLibraryName);
+
+      if(!_Initialized(i_intModuleID, strFunctionName)) return(ASWGLOBAL::BOOL::FALSE);
+
+      arrStrCommands.AddAsLast("OCoc0op\"1100\"");
+      arrStrCommands.AddAsLast("RD");
+
+      arrFltTimeouts.AddAsLast(TIMEOUT_SHORT);
+      arrFltTimeouts.AddAsLast(TIMEOUT_SHORT);
+
+      arrStrResponses.AddAsLast("OCer00 - simulated -");
+      arrStrResponses.AddAsLast("RDer00rd1 1 0 0 - simulated -");
+
+      if(Hamilton_MFX_2_0_Interface::TerminateModule(i_intModuleID,
+                                                     arrStrCommands,
+                                                     arrFltTimeouts,
+                                                     arrStrResponses,
+                                                     arrStrErrorCodes,
+                                                     strFunctionName,
+                                                     gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE)  return (ASWGLOBAL::BOOL::FALSE);
+
+       strTemp = arrStrResponses.GetAt(1);
+
+       if(strTemp.Find("rd1 1 0 0") == -1)
+       {
+        Hamilton_DriverTools::StatusTrace(Hamilton_DriverTools::ACTION::COMPLETE_WITH_ERROR,
+                                      TRACE_LEVEL_RELEASE,
+                                      "Error with the clamp status, current status is = '" + arrStrResponses.GetAt(1) + "' !",
+                                      strFunctionName,
+                                      gHamilton_Tilt_Clamp_Module_intTraceLevel,
+                                      gHamilton_Tilt_Clamp_Module_strLibraryName);
+       }
+
+
+      Hamilton_DriverTools::StatusTrace(Hamilton_DriverTools::ACTION::COMPLETE,
+                                        TRACE_LEVEL_DEBUG,
+                                        "",
+                                        strFunctionName,
+                                        gHamilton_Tilt_Clamp_Module_intTraceLevel,
+                                        gHamilton_Tilt_Clamp_Module_strLibraryName);
+      return(ASWGLOBAL::BOOL::TRUE);
+    } // Terminate
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    // function SetTraceLevel
+    //-------------------------------------------------------------------------------------------------------------------------
+    function SetTraceLevel(variable i_intModuleID,
+                           variable i_intTraceLevel) variable
+    {
+      variable strFunctionName("SetTraceLevel");
+
+      if(Hamilton_DriverTools::CheckIntegerRange(i_intModuleID,
+                                                 "i_intModuleID",
+                                                 Hamilton_MFX_2_0_Interface::MODULE_ID_MIN,
+                                                 Hamilton_MFX_2_0_Interface::MODULE_ID_MAX,
+                                                 strFunctionName,
+                                                 gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      if(Hamilton_DriverTools::CheckIntegerRange(i_intTraceLevel,
+                                                 "i_intTraceLevel",
+                                                 TRACE_LEVEL_RELEASE,
+                                                 TRACE_LEVEL_DEBUG,
+                                                 strFunctionName,
+                                                 gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      Hamilton_DriverTools::StatusTrace(Hamilton_DriverTools::ACTION::START,
+                                        TRACE_LEVEL_DEBUG,
+                                        "i_intModuleID = " + IStr(i_intModuleID) +
+                                        ", i_intTraceLevel = " + IStr(i_intTraceLevel),
+                                        strFunctionName,
+                                        gHamilton_Tilt_Clamp_Module_intTraceLevel,
+                                        gHamilton_Tilt_Clamp_Module_strLibraryName);
+
+      if(!_Initialized(i_intModuleID, strFunctionName)) return(ASWGLOBAL::BOOL::FALSE);
+
+      gHamilton_Tilt_Clamp_Module_intTraceLevel = i_intTraceLevel;
+
+      Hamilton_MFX_2_0_Interface::SetTraceLevel(i_intModuleID,
+                                                i_intTraceLevel,
+                                                strFunctionName,
+                                                gHamilton_Tilt_Clamp_Module_strLibraryName);
+
+      Hamilton_DriverTools::StatusTrace(Hamilton_DriverTools::ACTION::COMPLETE,
+                                        TRACE_LEVEL_DEBUG,
+                                        "",
+                                        strFunctionName,
+                                        gHamilton_Tilt_Clamp_Module_intTraceLevel,
+                                        gHamilton_Tilt_Clamp_Module_strLibraryName);
+      return(ASWGLOBAL::BOOL::TRUE);
+    } // SetTraceLevel
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    // function ClampOpen
+    //-------------------------------------------------------------------------------------------------------------------------
+    function ClampOpen(variable i_intModuleID) variable
+    {
+      variable arrStrCommands[], arrStrResponses[], arrFltTimeouts[], arrStrErrorCodes[];
+      string strTemp("");
+      variable strFunctionName("ClampOpen");
+
+      if(Hamilton_DriverTools::CheckIntegerRange(i_intModuleID,
+                                                 "i_intModuleID",
+                                                 Hamilton_MFX_2_0_Interface::MODULE_ID_MIN,
+                                                 Hamilton_MFX_2_0_Interface::MODULE_ID_MAX,
+                                                 strFunctionName,
+                                                 gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      Hamilton_DriverTools::StatusTrace(Hamilton_DriverTools::ACTION::START,
+                                        TRACE_LEVEL_DEBUG,
+                                        "i_intModuleID = " + IStr(i_intModuleID),
+                                        strFunctionName,
+                                        gHamilton_Tilt_Clamp_Module_intTraceLevel,
+                                        gHamilton_Tilt_Clamp_Module_strLibraryName);
+
+      if(!_Initialized(i_intModuleID, strFunctionName)) return(ASWGLOBAL::BOOL::FALSE);
+
+      arrStrCommands.AddAsLast("OCoc1op\"1100\"oq01200");
+      arrStrCommands.AddAsLast("RD");
+
+      arrFltTimeouts.AddAsLast(TIMEOUT_SHORT);
+      arrFltTimeouts.AddAsLast(TIMEOUT_SHORT);
+
+      arrStrResponses.AddAsLast("OCer00 - simulated -");
+      arrStrResponses.AddAsLast("RDer00rd0 0 0 0 - simulated -");
+
+      if(Hamilton_MFX_2_0_Interface::SendCommands(i_intModuleID,
+                                                  arrStrCommands,
+                                                  arrFltTimeouts,
+                                                  arrStrResponses,
+                                                  arrStrErrorCodes,
+                                                  strFunctionName,
+                                                  gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      strTemp = arrStrResponses.GetAt(1);
+
+      if(strTemp.Find("rd0 0 0 0") == -1)
+      {
+        Hamilton_DriverTools::StatusTrace(Hamilton_DriverTools::ACTION::COMPLETE_WITH_ERROR,
+                                          TRACE_LEVEL_RELEASE,
+                                          "Invalid clamp status, clamp not open !",
+                                          strFunctionName,
+                                          gHamilton_Tilt_Clamp_Module_intTraceLevel,
+                                          gHamilton_Tilt_Clamp_Module_strLibraryName);
+        return(ASWGLOBAL::BOOL::TRUE);
+      }
+
+      Hamilton_DriverTools::StatusTrace(Hamilton_DriverTools::ACTION::COMPLETE,
+                                        TRACE_LEVEL_DEBUG,
+                                        "",
+                                        strFunctionName,
+                                        gHamilton_Tilt_Clamp_Module_intTraceLevel,
+                                        gHamilton_Tilt_Clamp_Module_strLibraryName);
+      return(ASWGLOBAL::BOOL::TRUE);
+    } // ClampOpen
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    // function ClampClose
+    //-------------------------------------------------------------------------------------------------------------------------
+    function ClampClose(variable i_intModuleID) variable
+    {
+      variable arrStrCommands[], arrStrResponses[], arrFltTimeouts[], arrStrErrorCodes[];
+      string strTemp("");
+      variable strFunctionName("ClampClose");
+
+      if(Hamilton_DriverTools::CheckIntegerRange(i_intModuleID,
+                                                 "i_intModuleID",
+                                                 Hamilton_MFX_2_0_Interface::MODULE_ID_MIN,
+                                                 Hamilton_MFX_2_0_Interface::MODULE_ID_MAX,
+                                                 strFunctionName,
+                                                 gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      Hamilton_DriverTools::StatusTrace(Hamilton_DriverTools::ACTION::START,
+                                        TRACE_LEVEL_DEBUG,
+                                        "i_intModuleID = " + IStr(i_intModuleID),
+                                        strFunctionName,
+                                        gHamilton_Tilt_Clamp_Module_intTraceLevel,
+                                        gHamilton_Tilt_Clamp_Module_strLibraryName);
+
+      if(!_Initialized(i_intModuleID, strFunctionName)) return(ASWGLOBAL::BOOL::FALSE);
+
+      arrStrCommands.AddAsLast("OCoc0op\"1100\"");
+      arrStrCommands.AddAsLast("RD");
+
+      arrFltTimeouts.AddAsLast(TIMEOUT_SHORT);
+      arrFltTimeouts.AddAsLast(TIMEOUT_SHORT);
+
+      arrStrResponses.AddAsLast("OCer00 - simulated -");
+      arrStrResponses.AddAsLast("RDer00rd1 1 0 0 - simulated -");
+
+      if(Hamilton_MFX_2_0_Interface::SendCommands(i_intModuleID,
+                                                  arrStrCommands,
+                                                  arrFltTimeouts,
+                                                  arrStrResponses,
+                                                  arrStrErrorCodes,
+                                                  strFunctionName,
+                                                  gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      strTemp = arrStrResponses.GetAt(1);
+
+      if(strTemp.Find("rd1 1 0 0") == -1)
+      {
+        Hamilton_DriverTools::StatusTrace(Hamilton_DriverTools::ACTION::COMPLETE_WITH_ERROR,
+                                          TRACE_LEVEL_RELEASE,
+                                          "Invalid clamp status, clamp not closed !",
+                                          strFunctionName,
+                                          gHamilton_Tilt_Clamp_Module_intTraceLevel,
+                                          gHamilton_Tilt_Clamp_Module_strLibraryName);
+        return(ASWGLOBAL::BOOL::TRUE);
+      }
+
+      Hamilton_DriverTools::StatusTrace(Hamilton_DriverTools::ACTION::COMPLETE,
+                                        TRACE_LEVEL_DEBUG,
+                                        "",
+                                        strFunctionName,
+                                        gHamilton_Tilt_Clamp_Module_intTraceLevel,
+                                        gHamilton_Tilt_Clamp_Module_strLibraryName);
+      return(ASWGLOBAL::BOOL::TRUE);
+    } // ClampClose
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    // function Tilt
+    //-------------------------------------------------------------------------------------------------------------------------
+    function Tilt(variable i_intModuleID,
+                  variable i_intSpeed,
+                  variable i_intAngle) variable
+    {
+      variable strFunctionName("Tilt");
+
+      if(Hamilton_DriverTools::CheckIntegerRange(i_intModuleID,
+                                                 "i_intModuleID",
+                                                 Hamilton_MFX_2_0_Interface::MODULE_ID_MIN,
+                                                 Hamilton_MFX_2_0_Interface::MODULE_ID_MAX,
+                                                 strFunctionName,
+                                                 gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      if(Hamilton_DriverTools::CheckIntegerRange(i_intSpeed,
+                                                 "i_intSpeed",
+                                                 SPEED_MIN,
+                                                 SPEED_MAX,
+                                                 strFunctionName,
+                                                 gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      if(Hamilton_DriverTools::CheckIntegerRange(i_intAngle,
+                                                 "i_intAngle",
+                                                 ANGLE_MIN,
+                                                 ANGLE_MAX,
+                                                 strFunctionName,
+                                                 gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      Hamilton_DriverTools::StatusTrace(Hamilton_DriverTools::ACTION::START,
+                                        TRACE_LEVEL_DEBUG,
+                                        "i_intModuleID = " + IStr(i_intModuleID) +
+                                        ", i_intSpeed = " + IStr(i_intSpeed) +
+                                        ", i_intAngle = " + IStr(i_intAngle),
+                                        strFunctionName,
+                                        gHamilton_Tilt_Clamp_Module_intTraceLevel,
+                                        gHamilton_Tilt_Clamp_Module_strLibraryName);
+
+      if(!_Initialized(i_intModuleID, strFunctionName)) return(ASWGLOBAL::BOOL::FALSE);
+
+      if(!_Tilt(i_intModuleID,
+                i_intSpeed,
+                i_intAngle,
+                strFunctionName)) return(ASWGLOBAL::BOOL::FALSE);
+
+      Hamilton_DriverTools::StatusTrace(Hamilton_DriverTools::ACTION::COMPLETE,
+                                        TRACE_LEVEL_DEBUG,
+                                        "",
+                                        strFunctionName,
+                                        gHamilton_Tilt_Clamp_Module_intTraceLevel,
+                                        gHamilton_Tilt_Clamp_Module_strLibraryName);
+      return(ASWGLOBAL::BOOL::TRUE);
+    } // Tilt
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    // function Sway
+    //-------------------------------------------------------------------------------------------------------------------------
+    function Sway(variable i_intModuleID,
+                  variable i_intCycleNumber,
+                  variable i_intSpeed,
+                  variable i_intStartAngle,
+                  variable i_intSwayAngle,
+                  variable i_intEndAngle) variable
+    {
+      variable intIndex(0);
+      variable strFunctionName("Tilt");
+
+      if(Hamilton_DriverTools::CheckIntegerRange(i_intModuleID,
+                                                 "i_intModuleID",
+                                                 Hamilton_MFX_2_0_Interface::MODULE_ID_MIN,
+                                                 Hamilton_MFX_2_0_Interface::MODULE_ID_MAX,
+                                                 strFunctionName,
+                                                 gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      if(Hamilton_DriverTools::CheckIntegerValue(i_intCycleNumber,
+                                                 "i_intCycleNumber",
+                                                 Hamilton_DriverTools::VALUE_RANGE::POSITIVE,
+                                                 strFunctionName,
+                                                 gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      if(Hamilton_DriverTools::CheckIntegerRange(i_intSpeed,
+                                                 "i_intSpeed",
+                                                 SPEED_MIN,
+                                                 SPEED_MAX,
+                                                 strFunctionName,
+                                                 gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      if(Hamilton_DriverTools::CheckIntegerRange(i_intStartAngle,
+                                                 "i_intStartAngle",
+                                                 ANGLE_MIN + 1,
+                                                 ANGLE_MAX,
+                                                 strFunctionName,
+                                                 gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      if(Hamilton_DriverTools::CheckIntegerRange(i_intSwayAngle,
+                                                 "i_intSwayAngle",
+                                                 ANGLE_MIN + 1,
+                                                 ANGLE_MAX - i_intStartAngle,
+                                                 strFunctionName,
+                                                 gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      if(Hamilton_DriverTools::CheckIntegerRange(i_intEndAngle,
+                                                 "i_intEndAngle",
+                                                 ANGLE_MIN,
+                                                 ANGLE_MAX,
+                                                 strFunctionName,
+                                                 gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      Hamilton_DriverTools::StatusTrace(Hamilton_DriverTools::ACTION::START,
+                                        TRACE_LEVEL_DEBUG,
+                                        "i_intModuleID = " + IStr(i_intModuleID) +
+                                        ", i_intCycleNumber = " + IStr(i_intCycleNumber) +
+                                        ", i_intSpeed = " + IStr(i_intSpeed) +
+                                        ", i_intStartAngle = " + IStr(i_intStartAngle) +
+                                        ", i_intSwayAngle = " + IStr(i_intSwayAngle) +
+                                        ", i_intEndAngle = " + IStr(i_intEndAngle),
+                                        strFunctionName,
+                                        gHamilton_Tilt_Clamp_Module_intTraceLevel,
+                                        gHamilton_Tilt_Clamp_Module_strLibraryName);
+
+      if(!_Initialized(i_intModuleID, strFunctionName)) return(ASWGLOBAL::BOOL::FALSE);
+
+      if(!_Tilt(i_intModuleID,
+                i_intSpeed,
+                i_intStartAngle,
+                strFunctionName)) return(ASWGLOBAL::BOOL::FALSE);
+
+      for(intIndex = 0; intIndex < i_intCycleNumber; intIndex++)
+      {
+        if(!_Tilt(i_intModuleID,
+                  i_intSpeed,
+                  i_intStartAngle + i_intSwayAngle,
+                  strFunctionName)) return(ASWGLOBAL::BOOL::FALSE);
+
+        if(!_Tilt(i_intModuleID,
+                  i_intSpeed,
+                  i_intStartAngle,
+                  strFunctionName)) return(ASWGLOBAL::BOOL::FALSE);
+      }
+
+      if(!_Tilt(i_intModuleID,
+                i_intSpeed,
+                i_intEndAngle,
+                strFunctionName)) return(ASWGLOBAL::BOOL::FALSE);
+
+      Hamilton_DriverTools::StatusTrace(Hamilton_DriverTools::ACTION::COMPLETE,
+                                        TRACE_LEVEL_DEBUG,
+                                        "",
+                                        strFunctionName,
+                                        gHamilton_Tilt_Clamp_Module_intTraceLevel,
+                                        gHamilton_Tilt_Clamp_Module_strLibraryName);
+      return(ASWGLOBAL::BOOL::TRUE);
+    } // Sway
+
+    
+    //-------------------------------------------------------------------------------------------------------------------------
+    // function Sway_WSI
+    //-------------------------------------------------------------------------------------------------------------------------
+    function Sway_WSI(variable i_intModuleID,
+                      variable i_intCycleNumber,
+                      variable i_intSpeed,
+                      variable i_intStartAngle,
+                      variable i_intSwayAngle,
+                      variable i_intEndAngle,
+                      variable i_intPause) variable
+    {
+      variable intIndex(0);
+      timer timer1;
+      variable strFunctionName("Tilt");
+
+      if(Hamilton_DriverTools::CheckIntegerRange(i_intModuleID,
+                                                 "i_intModuleID",
+                                                 Hamilton_MFX_2_0_Interface::MODULE_ID_MIN,
+                                                 Hamilton_MFX_2_0_Interface::MODULE_ID_MAX,
+                                                 strFunctionName,
+                                                 gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      if(Hamilton_DriverTools::CheckIntegerValue(i_intCycleNumber,
+                                                 "i_intCycleNumber",
+                                                 Hamilton_DriverTools::VALUE_RANGE::POSITIVE,
+                                                 strFunctionName,
+                                                 gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      if(Hamilton_DriverTools::CheckIntegerRange(i_intSpeed,
+                                                 "i_intSpeed",
+                                                 SPEED_MIN,
+                                                 SPEED_MAX,
+                                                 strFunctionName,
+                                                 gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      if(Hamilton_DriverTools::CheckIntegerRange(i_intStartAngle,
+                                                 "i_intStartAngle",
+                                                 ANGLE_MIN + 1,
+                                                 ANGLE_MAX,
+                                                 strFunctionName,
+                                                 gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      if(Hamilton_DriverTools::CheckIntegerRange(i_intSwayAngle,
+                                                 "i_intSwayAngle",
+                                                 ANGLE_MIN + 1,
+                                                 ANGLE_MAX - i_intStartAngle,
+                                                 strFunctionName,
+                                                 gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      if(Hamilton_DriverTools::CheckIntegerRange(i_intEndAngle,
+                                                 "i_intEndAngle",
+                                                 ANGLE_MIN,
+                                                 ANGLE_MAX,
+                                                 strFunctionName,
+                                                 gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(ASWGLOBAL::BOOL::FALSE);
+
+      Hamilton_DriverTools::StatusTrace(Hamilton_DriverTools::ACTION::START,
+                                        TRACE_LEVEL_DEBUG,
+                                        "i_intModuleID = " + IStr(i_intModuleID) +
+                                        ", i_intCycleNumber = " + IStr(i_intCycleNumber) +
+                                        ", i_intSpeed = " + IStr(i_intSpeed) +
+                                        ", i_intStartAngle = " + IStr(i_intStartAngle) +
+                                        ", i_intSwayAngle = " + IStr(i_intSwayAngle) +
+                                        ", i_intEndAngle = " + IStr(i_intEndAngle),
+                                        strFunctionName,
+                                        gHamilton_Tilt_Clamp_Module_intTraceLevel,
+                                        gHamilton_Tilt_Clamp_Module_strLibraryName);
+
+      if(!_Initialized(i_intModuleID, strFunctionName)) return(ASWGLOBAL::BOOL::FALSE);
+
+      if(!_Tilt(i_intModuleID,
+                i_intSpeed,
+                i_intStartAngle,
+                strFunctionName)) return(ASWGLOBAL::BOOL::FALSE);
+
+      for(intIndex = 0; intIndex < i_intCycleNumber; intIndex++)
+      {
+        if(!_Tilt(i_intModuleID,
+                  i_intSpeed,
+                  i_intStartAngle + i_intSwayAngle,
+                  strFunctionName)) return(ASWGLOBAL::BOOL::FALSE);
+
+        if(!_Tilt(i_intModuleID,
+                  i_intSpeed,
+                  i_intStartAngle,
+                  strFunctionName)) return(ASWGLOBAL::BOOL::FALSE);
+        0 == timer1.SetTimer(0.2);
+        0 == timer1.WaitTimer(hslFalse, hslFalse);
+      }
+
+      if(!_Tilt(i_intModuleID,
+                i_intSpeed,
+                i_intEndAngle,
+                strFunctionName)) return(ASWGLOBAL::BOOL::FALSE);
+
+      Hamilton_DriverTools::StatusTrace(Hamilton_DriverTools::ACTION::COMPLETE,
+                                        TRACE_LEVEL_DEBUG,
+                                        "",
+                                        strFunctionName,
+                                        gHamilton_Tilt_Clamp_Module_intTraceLevel,
+                                        gHamilton_Tilt_Clamp_Module_strLibraryName);
+      return(ASWGLOBAL::BOOL::TRUE);
+    } // Sway_WSI
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    // private function _Initialized
+    //-------------------------------------------------------------------------------------------------------------------------
+    private function _Initialized(variable i_intModuleID,
+                                  variable i_strCallingFunctionName) variable
+    {
+      if(!gHamilton_Tilt_Clamp_Module_blnLibraryInitialized)
+      {
+        Hamilton_DriverTools::StatusTrace(Hamilton_DriverTools::ACTION::COMPLETE_WITH_ERROR,
+                                          TRACE_LEVEL_DEBUG,
+                                          "Library not initialized - use function 'Initialize' first !",
+                                          i_strCallingFunctionName,
+                                          gHamilton_Tilt_Clamp_Module_intTraceLevel,
+                                          gHamilton_Tilt_Clamp_Module_strLibraryName);
+        return(hslFalse);
+      }
+
+      return(hslTrue);
+    } // _Initialized
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    // private function _Tilt
+    //-------------------------------------------------------------------------------------------------------------------------
+    private function _Tilt(variable i_intModuleID,
+                           variable i_intSpeed,
+                           variable i_intAngle,
+                           variable i_strCallingFunctionName) variable
+    {
+      variable strSpeed(""), strAngle("");
+      variable arrStrCommands[], arrStrResponses[], arrFltTimeouts[], arrStrErrorCodes[];
+
+      strSpeed = IStr(i_intSpeed * 20);
+      strAngle = IStr(i_intAngle * 10);
+
+      arrStrCommands.AddAsLast("XAxa" +
+                               Hamilton_DriverTools::FillLeft(strAngle,
+                                                              "0",
+                                                              6,
+                                                              i_strCallingFunctionName,
+                                                              gHamilton_Tilt_Clamp_Module_strLibraryName) +
+                               "xv" +
+                               Hamilton_DriverTools::FillLeft(strSpeed,
+                                                              "0",
+                                                              4,
+                                                              i_strCallingFunctionName,
+                                                              gHamilton_Tilt_Clamp_Module_strLibraryName) +
+                              "xr1");
+
+      arrFltTimeouts.AddAsLast(TIMEOUT_LONG);
+
+      arrStrResponses.AddAsLast("XAerr00 - simulated -");
+
+      if(Hamilton_MFX_2_0_Interface::SendCommands(i_intModuleID,
+                                                  arrStrCommands,
+                                                  arrFltTimeouts,
+                                                  arrStrResponses,
+                                                  arrStrErrorCodes,
+                                                  i_strCallingFunctionName,
+                                                  gHamilton_Tilt_Clamp_Module_strLibraryName) == ASWGLOBAL::BOOL::FALSE) return(hslFalse);
+
+      return(hslTrue);
+    } // _Tilt
+  }
+#endif
+// $$author=ch33$$valid=0$$time=2025-07-02 11:03$$checksum=49201f95$$length=081$$

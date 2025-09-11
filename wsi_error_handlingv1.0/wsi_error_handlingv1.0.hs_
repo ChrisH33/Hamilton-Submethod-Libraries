@@ -1,0 +1,20 @@
+
+// this ALWAYS GENERATED file contains the sub-method library header
+// Generated at 29/06/2023 15:52:57
+
+#pragma once
+#ifndef HSL_RUNTIME
+namespace WSI_ERROR_HANDLINGV1_0 {
+function _InitLibrary() { }
+function _ExitLibrary() { }
+function A_GetError( device & ML_Star, variable i_intTraceLevel, variable & io_arrChannelInError[], variable & io_arrErrorCodes[] ) void { }
+function B_WriteError( variable i_strErrorCodeFilePath, variable i_strErrorCode ) void { }
+function C_WritePipettingError( variable i_strErrorCodeFilePath, variable & io_arrChannelInError[], variable & io_arrErrorCode[] ) void { }
+function D_GetResponse( variable i_strResponseFilePath, variable & o_intResponse ) void { }
+} // namespace
+#endif
+
+#ifdef HSL_RUNTIME
+#include __filename__ ".hsi"
+#endif
+// $$author=ch33$$valid=0$$time=2023-06-29 15:52$$checksum=7d3072de$$length=081$$

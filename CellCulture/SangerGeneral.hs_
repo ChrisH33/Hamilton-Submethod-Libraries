@@ -1,0 +1,31 @@
+
+// this ALWAYS GENERATED file contains the sub-method library header
+// Generated at 20/08/2025 16:54:00
+
+#pragma once
+#ifndef HSL_RUNTIME
+namespace SANGERGENERAL {
+function _InitLibrary() { }
+function _ExitLibrary() { }
+function AlignLabware( device & ML_STAR, sequence & _seq ) void { }
+function CreateChannelPattern( variable _intChannelNumber, variable _intCurrentLoop, variable _intMaxLoop, variable _intModulus ) variable {  return (0); }
+function DeleteSchema( variable _strFolderPath ) void { }
+function DoorLock( device & ML_STAR, variable _blnSim, variable _blnLock ) void { }
+function GetAvailableSeqPositions( sequence & _seq ) variable {  return (0); }
+function GetBarcode( device & ML_STAR, sequence _seq ) variable {  return (0); }
+function ReloadTips( device & ML_STAR, variable _strTipCounter, variable _blnUserPrompt ) void { }
+function StackedLabwarePos( variable _blnEffect, sequence & _seq ) void { }
+function StatusDisplay_Init( variable _blnTraceMethodName ) void { }
+function StatusDisplay_Update( variable _strMessage1, variable _strMessage2, variable _blnTrace ) variable {  return (0); }
+function TipCheck( sequence & _seqTips, variable _strTipCounter, variable _intTipsNeeded ) variable {  return (0); }
+function TipPickup( device & ML_STAR, variable _strChannelPattern, sequence & _seqTip, variable _strTipCounter, variable _blnTesting ) void { }
+function UpdateUsers_DateLastUsed( variable _strCurrentUserPrefix ) void { }
+function VolumePlausibilityCheck( variable _intVolumeToTransfer, variable _strLC ) void { }
+function WorklistEntryValidation( variable varEntry, variable blnRemoveSpaces ) variable {  return (0); }
+} // namespace
+#endif
+
+#ifdef HSL_RUNTIME
+#include __filename__ ".hsi"
+#endif
+// $$author=ch33$$valid=0$$time=2025-08-20 16:54$$checksum=a7d30ff6$$length=081$$

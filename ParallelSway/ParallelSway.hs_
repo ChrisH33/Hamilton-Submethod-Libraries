@@ -1,0 +1,17 @@
+
+// this ALWAYS GENERATED file contains the sub-method library header
+// Generated at 01/08/2025 09:26:33
+
+#pragma once
+#ifndef HSL_RUNTIME
+namespace PARALLELSWAY {
+function _InitLibrary() { }
+function _ExitLibrary() { }
+function ParallelSway( variable & i_arrModules[], variable i_intSpeed, variable i_intStartAngle, variable i_intEndAngle, variable i_intTime, variable i_blnSimMode ) void { }
+} // namespace
+#endif
+
+#ifdef HSL_RUNTIME
+#include __filename__ ".hsi"
+#endif
+// $$author=ch33$$valid=0$$time=2025-08-01 09:26$$checksum=979c6f36$$length=081$$

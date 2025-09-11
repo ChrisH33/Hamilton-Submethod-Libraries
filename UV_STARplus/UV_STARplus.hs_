@@ -1,0 +1,17 @@
+
+// this ALWAYS GENERATED file contains the sub-method library header
+// Generated at 08/11/2024 09:25:32
+
+#pragma once
+#ifndef HSL_RUNTIME
+namespace UV_STARPLUS {
+function _InitLibrary() { }
+function _ExitLibrary() { }
+function Lights( variable blnLights, timer & tmrUVLightOn, device & ML_STAR ) void { }
+} // namespace
+#endif
+
+#ifdef HSL_RUNTIME
+#include __filename__ ".hsi"
+#endif
+// $$author=ch33$$valid=0$$time=2024-11-08 09:25$$checksum=9136c283$$length=081$$

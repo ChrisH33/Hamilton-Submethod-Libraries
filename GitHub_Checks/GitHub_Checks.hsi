@@ -1,0 +1,210 @@
+// {{{ 2 "IncludeGuard" "PragmaOnce"
+#pragma once
+// }} ""
+#include "HSLStrLib.hsl"
+/* {{ 2 "LibraryInsertLine" "" */ // }} ""
+// {{ 2 "TemplateIncludeBlock" ""
+#include "HSLMETEDLib.hs_"
+#include "HSLMECCLib.hs_"
+// }} ""
+// {{{ 2 "LibraryNamespace" "Begin"
+namespace GITHUB_CHECKS {
+// }} ""
+/* {{ 2 "VariableInsertLine" "" */ // }} ""
+// {{{ 2 "SubmethodForwardDeclaration" ""
+function Sub1( variable i_strGitFolderPath, variable i_blnTraces ) void ;
+// }} ""
+function _InitLibrary() {
+// {{ 2 "AutoInitBlock" ""
+// }} ""
+}
+function _ExitLibrary() {
+// {{ 2 "AutoExitBlock" ""
+// }} ""
+}
+// {{{ 5 "Sub1" "Begin"
+function Sub1( variable i_strGitFolderPath, variable i_blnTraces ) void {
+// }} ""
+private variable _str;
+private variable _strFilePath_NetworkCommit;
+private variable _strFilePath_LocalBranch;
+private variable _strFilePath_LocalCommit;
+private variable _strTest;
+private file _hndLocalBranch;
+private variable _strRequiredBranch;
+private variable _strLocalBranch;
+private variable _strLocalCommit;
+private variable _strNetworkCommit;
+private file _hndNetworkCommit;
+private file _hndLocalCommit;
+// {{ 5 "Sub1" "InitLocals"
+// }} ""
+// {{ 1 1 0 "ef07c17e_dc0a_49a7_87fc7440352c3613" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 2 1 0 "7df525eb_122d_4cc6_a2cb85db0d792fdd" "{586C3429-F931-405f-9938-928E22C90BFA}"
+
+// }} ""
+// {{ 3 1 0 "2e3843c6_afb1_458e_9045879b39a2c560" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 4 1 0 "9abe4365_00f8_499e_a08b97a71f17a532" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strFilePath_LocalCommit = StrConcat2(i_strGitFolderPath, Translate("refs\\heads\\main"));
+// }} ""
+// {{{ 5 1 0 "2b4d8dd4_5b0a_43e7_9f3ae0afd49d3185" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strFilePath_NetworkCommit = StrConcat2(i_strGitFolderPath, Translate("FETCH_HEAD"));
+// }} ""
+// {{{ 6 1 0 "60808dc0_b301_46a3_baf10a53fb78110e" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strFilePath_LocalBranch = StrConcat2(i_strGitFolderPath, Translate("HEAD"));
+// }} ""
+// {{ 7 1 0 "1401af7c_6198_4ee1_844724f9f4ff8489" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (i_blnTraces == 1)
+{
+// }} ""
+Trace("-- Local Commit File Path: ", _strFilePath_LocalCommit);
+Trace("-- Network Commit File Path: ", _strFilePath_NetworkCommit);
+Trace("-- Local Branch File Path: ", _strFilePath_LocalBranch);
+// {{ 9 1 0 "1401af7c_6198_4ee1_844724f9f4ff8489" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{ 10 1 0 "40e91bcb_091b_481f_838126de8a9ff5fb" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 11 1 0 "14287d30_6146_43aa_a1e0bc4a0a44372f" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strRequiredBranch = StrConcat4(Translate("ref: "), Translate("refs/heads/main"), Translate(""), Translate(""));
+// }} ""
+// {{ 12 1 0 "7df525eb_122d_4cc6_a2cb85db0d792fdd" "{586C3429-F931-405f-9938-928E22C90BFA}"
+
+// }} ""
+// {{ 13 1 0 "f4134b86_2f32_4294_9d29454459ec7bcf" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 14 1 0 "ef7c2f06_e8f8_44fb_beb204711daca62a" "{586C3429-F931-405f-9938-928E22C90BFA}"
+
+// }} ""
+// {{ 15 1 0 "9c17bca3_75bc_4569_bfc016a3fc92ab20" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 16 1 0 "a529dd2f_7924_43fd_92c01a5a9e703aab" "{B31F3534-5D80-11d4-A5EB-0050DA737D89}"
+_hndLocalBranch.AddField(1, _strLocalBranch, hslString);
+_hndLocalBranch.SetDelimiter(hslAsciiText);
+if( 0 == _hndLocalBranch.Open(_strFilePath_LocalBranch, hslRead) )
+{
+    MECC::RaiseRuntimeErrorEx(-1523711743, MECC::IDS::stepNameFileOpen, MECC::IDS::errorStepFileOpenFailed, _strFilePath_LocalBranch, "HxMetEdCompCmd");
+}
+// }} ""
+// {{ 17 1 0 "da6053b4_4ab5_48b1_a8dd1a233ddd3de0" "{B31F3536-5D80-11d4-A5EB-0050DA737D89}"
+if( 0 == _hndLocalBranch.ReadRecord() )
+{
+    MECC::RaiseRuntimeErrorEx(-1490157312, MECC::IDS::stepNameFileRead, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
+}
+// }} ""
+// {{ 18 1 0 "110deaeb_cd38_4d7b_95a58504c7a878ef" "{B31F3538-5D80-11d4-A5EB-0050DA737D89}"
+if( 0 != _hndLocalBranch.Close() )
+{
+    MECC::RaiseRuntimeErrorEx(-1456602880, MECC::IDS::stepNameFileClose, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
+}
+_hndLocalBranch.RemoveFields();
+// }} ""
+// {{ 19 1 0 "8541c47f_59f6_4993_bbe228edb7692740" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (i_blnTraces == 1)
+{
+// }} ""
+Trace("-- Local Branch: ", _strLocalBranch);
+// {{ 21 1 0 "8541c47f_59f6_4993_bbe228edb7692740" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{ 22 1 0 "8358afe2_ea81_4788_9a33d3e9249fed2a" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 23 1 0 "ad4f1574_0527_49bc_8a56ccc0b362bbd7" "{B31F3534-5D80-11d4-A5EB-0050DA737D89}"
+_hndLocalCommit.AddField(1, _strLocalCommit, hslString);
+_hndLocalCommit.SetDelimiter(hslAsciiText);
+if( 0 == _hndLocalCommit.Open(_strFilePath_LocalCommit, hslRead) )
+{
+    MECC::RaiseRuntimeErrorEx(-1523711743, MECC::IDS::stepNameFileOpen, MECC::IDS::errorStepFileOpenFailed, _strFilePath_LocalCommit, "HxMetEdCompCmd");
+}
+// }} ""
+// {{ 24 1 0 "6602c283_d340_4a6c_b147c90a76000865" "{B31F3536-5D80-11d4-A5EB-0050DA737D89}"
+if( 0 == _hndLocalCommit.ReadRecord() )
+{
+    MECC::RaiseRuntimeErrorEx(-1490157312, MECC::IDS::stepNameFileRead, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
+}
+// }} ""
+// {{ 25 1 0 "746b7cfb_7ea3_41e5_8877e8c24872880c" "{B31F3538-5D80-11d4-A5EB-0050DA737D89}"
+if( 0 != _hndLocalCommit.Close() )
+{
+    MECC::RaiseRuntimeErrorEx(-1456602880, MECC::IDS::stepNameFileClose, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
+}
+_hndLocalCommit.RemoveFields();
+// }} ""
+// {{ 26 1 0 "7cf8ed35_7976_49cf_b373d51a12b4ef3b" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (i_blnTraces == 1)
+{
+// }} ""
+Trace("-- Local Commit: ", _strLocalCommit);
+// {{ 28 1 0 "7cf8ed35_7976_49cf_b373d51a12b4ef3b" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{ 29 1 0 "a89bcd36_f6a7_4dac_9e228c207a0125a5" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 30 1 0 "5376d590_0146_406b_a80ed03f30f2904e" "{B31F3534-5D80-11d4-A5EB-0050DA737D89}"
+_hndNetworkCommit.AddField(1, _strNetworkCommit, hslString);
+_hndNetworkCommit.SetDelimiter(hslAsciiText);
+if( 0 == _hndNetworkCommit.Open(_strFilePath_NetworkCommit, hslRead) )
+{
+    MECC::RaiseRuntimeErrorEx(-1523711743, MECC::IDS::stepNameFileOpen, MECC::IDS::errorStepFileOpenFailed, _strFilePath_NetworkCommit, "HxMetEdCompCmd");
+}
+// }} ""
+// {{ 31 1 0 "a17e6ff8_411a_458d_b1d34567f941a845" "{B31F3536-5D80-11d4-A5EB-0050DA737D89}"
+if( 0 == _hndNetworkCommit.ReadRecord() )
+{
+    MECC::RaiseRuntimeErrorEx(-1490157312, MECC::IDS::stepNameFileRead, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
+}
+// }} ""
+// {{ 32 1 0 "df0d8b5e_1a96_40c9_8d43766c01f2efff" "{B31F3538-5D80-11d4-A5EB-0050DA737D89}"
+if( 0 != _hndNetworkCommit.Close() )
+{
+    MECC::RaiseRuntimeErrorEx(-1456602880, MECC::IDS::stepNameFileClose, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
+}
+_hndNetworkCommit.RemoveFields();
+// }} ""
+// {{ 33 1 0 "12afe3f1_d119_4823_bd5eff4e8e17fc96" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (i_blnTraces == 1)
+{
+// }} ""
+Trace("-- Network Commit: ", _strNetworkCommit);
+// {{ 35 1 0 "12afe3f1_d119_4823_bd5eff4e8e17fc96" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{ 36 1 0 "ef7c2f06_e8f8_44fb_beb204711daca62a" "{586C3429-F931-405f-9938-928E22C90BFA}"
+
+// }} ""
+// {{ 37 1 0 "039a28f4_5e6a_44bd_9d791fadc2781961" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+/* {{ 1 "" "0" */ if(0){  /* }} "" */
+// {{ 38 1 0 "10505f40_1495_430b_99f5b7444c4a3680" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (_strLocalBranch != _strRequiredBranch)
+{
+// }} ""
+// {{ 39 1 0 "5d4ed14a_b5cb_4df4_8617f1de51ba7843" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+Trace("The local GitHub branch is incorrect");
+// {{ 41 1 0 "fbc47ab8_2cd2_4c43_86289b75f943670d" "{930D6C31-8EFB-11d4-A3BA-002035848439}"
+abort;
+// }} ""
+// {{ 42 1 0 "10505f40_1495_430b_99f5b7444c4a3680" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+/* {{ 1 "" "1" */ } /* }} "" */
+// {{{ 5 "Sub1" "End"
+}
+// }} ""
+/* {{ 2 "SubmethodInsertLine" "" */ // }} ""
+// {{{ 2 "LibraryNamespace" "End"
+} // library namespace
+// }} ""
+// $$author=ch33$$valid=0$$time=2025-08-05 16:11$$checksum=d586a03e$$length=083$$

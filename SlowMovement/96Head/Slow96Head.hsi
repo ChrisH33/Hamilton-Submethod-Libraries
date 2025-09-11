@@ -1,0 +1,237 @@
+// {{{ 2 "IncludeGuard" "PragmaOnce"
+#pragma once
+// }} ""
+#include "HSLStrLib.hsl"
+#include "HSLMthLib.hsl"
+/* {{ 2 "LibraryInsertLine" "" */ // }} ""
+// {{ 2 "TemplateIncludeBlock" ""
+#include "HSLMETEDLib.hs_"
+#include "HSLMECCLib.hs_"
+#include "HSLPTLLib.hsl"
+// }} ""
+// {{{ 2 "LibraryNamespace" "Begin"
+namespace SLOW96HEAD {
+// }} ""
+/* {{ 2 "VariableInsertLine" "" */ // }} ""
+// {{{ 2 "SubmethodForwardDeclaration" ""
+private function Abstract(  ) void ;
+function MPH_96_ResetMovement( device & ML_STAR ) void ;
+function MPH_96_SlowMovement( device & ML_STAR, variable _varAxis ) void ;
+function MPH_96_SlowMovement_Variable( device & ML_STAR, variable _varAxis, variable _intRelativeSpeed, variable _intRelativeAcceleration ) void ;
+// }} ""
+function _InitLibrary() {
+// {{ 2 "AutoInitBlock" ""
+PTL::SetWashingStateDefault("RinseTime1", 5);
+PTL::SetWashingStateDefault("SoakTime1", 5);
+PTL::SetWashingStateDefault("FlowRate1", 11);
+PTL::SetWashingStateDefault("RinseTime2", 0);
+PTL::SetWashingStateDefault("SoakTime2", 0);
+PTL::SetWashingStateDefault("FlowRate2", 11);
+PTL::SetWashingStateDefault("DrainingTime", 10);
+PTL::SetWashingStateDefault("StartWashLiquid", 0);
+PTL::SetLoadingStateDefault("RecoveryOptionContinue", hslTrue);
+PTL::SetLoadingStateDefault("RecoveryOptionExclude", hslTrue);
+PTL::SetLoadingStateDefault("RecoveryOptionDefault", 0);
+PTL::SetLoadingStateDefault("KitLotCheckEnabled", hslFalse);
+// }} ""
+}
+function _ExitLibrary() {
+// {{ 2 "AutoExitBlock" ""
+// }} ""
+}
+// {{{ 5 "MPH_96_ResetMovement" "Begin"
+function MPH_96_ResetMovement( device & ML_STAR ) void {
+// }} ""
+private variable _strFWCommand;
+// {{ 5 "MPH_96_ResetMovement" "InitLocals"
+// }} ""
+// {{{ 4 1 0 "6bdcfd6a_6ef7_4aaf_8e547f6db14a50b3" "{7C4EF7A7-39BE-406a-897F-71F3A35B4093}"
+Abstract();
+// }} ""
+// {{ 5 1 0 "59e88aae_43fe_4247_be6cdeae5485738c" "{B31F3543-5D80-11d4-A5EB-0050DA737D89}"
+_strFWCommand = Translate("H0AA");
+// }} ""
+// {{ 6 1 0 "ff899a03_51d1_4a27_9f166bd8515cb672" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 7 1 0 "5dd2d1f6_6888_4f30_99b7e00e2997cb65" "ML_STAR:{1FB5DA01-3ACB-11d4-AE1F-0004ACB1DCB2}"
+{
+	variable arrRetValues[];
+	arrRetValues = ML_STAR._1FB5DA01_3ACB_11d4_AE1F_0004ACB1DCB2("5dd2d1f6_6888_4f30_99b7e00e2997cb65"); // FirmwareCommand
+}
+// }} ""
+// {{ 8 1 0 "380c9ced_2216_497c_b221c79aff520cb6" "ML_STAR:{1FB5DA01-3ACB-11d4-AE1F-0004ACB1DCB2}"
+{
+	variable arrRetValues[];
+	arrRetValues = ML_STAR._1FB5DA01_3ACB_11d4_AE1F_0004ACB1DCB2("380c9ced_2216_497c_b221c79aff520cb6"); // FirmwareCommand
+}
+// }} ""
+// {{ 9 1 0 "3cfc6596_76d3_4673_9ba9ada133f60b5f" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 10 1 0 "9de96b32_4a79_4bbb_a6c3a0934ea979e8" "ML_STAR:{1FB5DA01-3ACB-11d4-AE1F-0004ACB1DCB2}"
+{
+	variable arrRetValues[];
+	arrRetValues = ML_STAR._1FB5DA01_3ACB_11d4_AE1F_0004ACB1DCB2("9de96b32_4a79_4bbb_a6c3a0934ea979e8"); // FirmwareCommand
+}
+// }} ""
+// {{ 11 1 0 "00d63d5a_97da_42ce_8ffd1daa2531ebb1" "ML_STAR:{1FB5DA01-3ACB-11d4-AE1F-0004ACB1DCB2}"
+{
+	variable arrRetValues[];
+	arrRetValues = ML_STAR._1FB5DA01_3ACB_11d4_AE1F_0004ACB1DCB2("00d63d5a_97da_42ce_8ffd1daa2531ebb1"); // FirmwareCommand
+}
+// }} ""
+// {{{ 5 "MPH_96_ResetMovement" "End"
+}
+// }} ""
+// {{{ 5 "MPH_96_SlowMovement" "Begin"
+function MPH_96_SlowMovement( device & ML_STAR, variable _varAxis ) void {
+// }} ""
+private variable _strFWCommand;
+// {{ 5 "MPH_96_SlowMovement" "InitLocals"
+// }} ""
+// {{{ 13 1 0 "deb1ad85_3dfb_4806_9f4157315c9944ba" "{7C4EF7A7-39BE-406a-897F-71F3A35B4093}"
+Abstract();
+// }} ""
+// {{ 14 1 0 "b5a7d307_d365_4dce_804d5837100458e1" "{B31F3543-5D80-11d4-A5EB-0050DA737D89}"
+_strFWCommand = Translate("H0AA");
+// }} ""
+// {{ 15 1 0 "36198593_0e39_43ba_9549b628508af602" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 16 1 0 "0ce5538e_b0f2_448b_b40a843a35c3aa77" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (_varAxis != 2)
+{
+// }} ""
+// {{ 17 1 0 "d6799f1a_62d6_4c91_b3e991350fb9aca1" "ML_STAR:{1FB5DA01-3ACB-11d4-AE1F-0004ACB1DCB2}"
+{
+	variable arrRetValues[];
+	arrRetValues = ML_STAR._1FB5DA01_3ACB_11d4_AE1F_0004ACB1DCB2("d6799f1a_62d6_4c91_b3e991350fb9aca1"); // FirmwareCommand
+}
+// }} ""
+// {{ 18 1 0 "ff364c48_7732_40d9_98606b0c54cbf0cf" "ML_STAR:{1FB5DA01-3ACB-11d4-AE1F-0004ACB1DCB2}"
+{
+	variable arrRetValues[];
+	arrRetValues = ML_STAR._1FB5DA01_3ACB_11d4_AE1F_0004ACB1DCB2("ff364c48_7732_40d9_98606b0c54cbf0cf"); // FirmwareCommand
+}
+// }} ""
+// {{ 19 1 0 "0ce5538e_b0f2_448b_b40a843a35c3aa77" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{ 20 1 0 "8a4a1c6c_b1c2_4dce_a5d420f5580165de" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 21 1 0 "9a3a5059_479b_4b0b_ab745fa77b49a311" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (_varAxis >= 2)
+{
+// }} ""
+// {{ 22 1 0 "fcf2f1e2_3e01_4493_931b146e0a78d5bd" "ML_STAR:{1FB5DA01-3ACB-11d4-AE1F-0004ACB1DCB2}"
+{
+	variable arrRetValues[];
+	arrRetValues = ML_STAR._1FB5DA01_3ACB_11d4_AE1F_0004ACB1DCB2("fcf2f1e2_3e01_4493_931b146e0a78d5bd"); // FirmwareCommand
+}
+// }} ""
+// {{ 23 1 0 "090fc6fb_70d4_4b6b_9aae0b0937d782d9" "ML_STAR:{1FB5DA01-3ACB-11d4-AE1F-0004ACB1DCB2}"
+{
+	variable arrRetValues[];
+	arrRetValues = ML_STAR._1FB5DA01_3ACB_11d4_AE1F_0004ACB1DCB2("090fc6fb_70d4_4b6b_9aae0b0937d782d9"); // FirmwareCommand
+}
+// }} ""
+// {{ 24 1 0 "9a3a5059_479b_4b0b_ab745fa77b49a311" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{{ 5 "MPH_96_SlowMovement" "End"
+}
+// }} ""
+// {{{ 5 "Abstract" "Begin"
+private function Abstract(  ) void {
+// }} ""
+// {{ 5 "Abstract" "InitLocals"
+// }} ""
+// {{ 1 1 0 "c6882dd2_be7f_4461_823dfc788cc9159d" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+Trace("##### Slow96Head.smt - V1.2 - July2023");
+// {{{ 5 "Abstract" "End"
+}
+// }} ""
+// {{{ 5 "MPH_96_SlowMovement_Variable" "Begin"
+function MPH_96_SlowMovement_Variable( device & ML_STAR, variable _varAxis, variable _intRelativeSpeed, variable _intRelativeAcceleration ) void {
+// }} ""
+private variable _fltPercentChange_Speed;
+private variable _strFWCommand;
+private variable _fltPercentChange_Acceleration;
+private variable _strFWParameter;
+// {{ 5 "MPH_96_SlowMovement_Variable" "InitLocals"
+// }} ""
+// {{{ 26 1 0 "1d10f986_124d_4779_86e2ede7690ffddb" "{7C4EF7A7-39BE-406a-897F-71F3A35B4093}"
+Abstract();
+// }} ""
+// {{ 27 1 0 "77f06c8b_cf5d_46fe_b6a0bc6e44bf57b8" "{B31F3544-5D80-11d4-A5EB-0050DA737D89}"
+_fltPercentChange_Speed = _intRelativeSpeed / (100 * 1.0);
+// }} ""
+// {{ 28 1 0 "fe5e4449_a5d0_4d01_83b6c6b8ec5b5f7c" "{B31F3544-5D80-11d4-A5EB-0050DA737D89}"
+_fltPercentChange_Acceleration = _intRelativeAcceleration / (100 * 1.0);
+// }} ""
+// {{ 29 1 0 "10891311_5a11_4301_9ac8c805d858f840" "{B31F3543-5D80-11d4-A5EB-0050DA737D89}"
+_strFWCommand = Translate("H0AA");
+// }} ""
+// {{ 30 1 0 "e7691cab_c14b_4412_aa0f429b5766a54c" "{B31F3543-5D80-11d4-A5EB-0050DA737D89}"
+_strFWParameter = Translate("");
+// }} ""
+// {{ 31 1 0 "af326c7d_6f1c_45aa_bac396fd817e938e" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 32 1 0 "c4b7346a_f2f9_4e9c_b4aa2a45a87b575d" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (_varAxis != 2)
+{
+// }} ""
+_strFWParameter = StrConcat2("yv", StrRight(StrConcat2("00000", StrIStr(MthCeiling(_fltPercentChange_Speed * 25000))),(5)));
+// {{ 34 1 0 "b3bd0264_b1de_484c_abb19cab3277e45d" "ML_STAR:{1FB5DA01-3ACB-11d4-AE1F-0004ACB1DCB2}"
+{
+	variable arrRetValues[];
+	arrRetValues = ML_STAR._1FB5DA01_3ACB_11d4_AE1F_0004ACB1DCB2("b3bd0264_b1de_484c_abb19cab3277e45d"); // FirmwareCommand
+}
+// }} ""
+_strFWParameter = StrConcat2("yr", StrRight(StrConcat2("00000", StrIStr(MthCeiling(_fltPercentChange_Acceleration * 35000))),(5)));
+// {{ 36 1 0 "bda1e4f3_c29f_42db_b8bab881daa9ab6d" "ML_STAR:{1FB5DA01-3ACB-11d4-AE1F-0004ACB1DCB2}"
+{
+	variable arrRetValues[];
+	arrRetValues = ML_STAR._1FB5DA01_3ACB_11d4_AE1F_0004ACB1DCB2("bda1e4f3_c29f_42db_b8bab881daa9ab6d"); // FirmwareCommand
+}
+// }} ""
+// {{ 37 1 0 "c4b7346a_f2f9_4e9c_b4aa2a45a87b575d" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{ 38 1 0 "d4132b20_d475_4303_a79c1d04e6be836a" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 39 1 0 "fac1fb21_e5b0_439c_a71a424ba1544998" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (_varAxis >= 2)
+{
+// }} ""
+_strFWParameter = StrConcat2("zv", StrRight(StrConcat2("00000", StrIStr(MthCeiling(_fltPercentChange_Speed * 17000))),(5)));
+// {{ 41 1 0 "189a2aac_4d72_472f_a4ba8584783674a1" "ML_STAR:{1FB5DA01-3ACB-11d4-AE1F-0004ACB1DCB2}"
+{
+	variable arrRetValues[];
+	arrRetValues = ML_STAR._1FB5DA01_3ACB_11d4_AE1F_0004ACB1DCB2("189a2aac_4d72_472f_a4ba8584783674a1"); // FirmwareCommand
+}
+// }} ""
+_strFWParameter = StrConcat2("zr", StrRight(StrConcat2("000000", StrIStr(MthCeiling(_fltPercentChange_Acceleration * 80000))),(6)));
+// {{ 43 1 0 "e7cd1927_bb13_4a3f_9ab1997045984624" "ML_STAR:{1FB5DA01-3ACB-11d4-AE1F-0004ACB1DCB2}"
+{
+	variable arrRetValues[];
+	arrRetValues = ML_STAR._1FB5DA01_3ACB_11d4_AE1F_0004ACB1DCB2("e7cd1927_bb13_4a3f_9ab1997045984624"); // FirmwareCommand
+}
+// }} ""
+// {{ 44 1 0 "fac1fb21_e5b0_439c_a71a424ba1544998" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{{ 5 "MPH_96_SlowMovement_Variable" "End"
+}
+// }} ""
+/* {{ 2 "SubmethodInsertLine" "" */ // }} ""
+// {{{ 2 "LibraryNamespace" "End"
+} // library namespace
+// }} ""
+// $$author=Hamilton$$valid=0$$time=2023-07-05 09:56$$checksum=17483f02$$length=087$$

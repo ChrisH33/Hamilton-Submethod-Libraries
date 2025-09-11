@@ -1,0 +1,229 @@
+//----------------------------------------------------------------------------------------
+// Copyright (C) by HAMILTON Bonaduz AG, CH-7402 Bonaduz.
+// All rights reserved.
+//
+// Project              : AswStatusDialog ViewController
+// Description          : This Library represents a status window with a user defined status message. 
+//                        The GUI contains a window  with an textbox to display status messages. 
+//                        The status window will be located in the top right corner on the screen.
+// 
+// Software Version     :
+//
+// Revision history:
+// - 1.0.1.0    2011.12.21    ppesce    library created 
+// - 1.0.1.1    2012.08.14    dho       added parameter check
+// - 1.0.1.2    2023.05.24    Chris     commented out the traces
+//
+//--------------------------------------------------------------------------------------------------
+
+#ifndef __ASWSTATUSDIALOG__
+#define __ASWSTATUSDIALOG__ 1
+
+//============================== includes ==============================
+#ifndef __ASWGLOBAL_hsl__
+   #include "ASWStandard/ASWGlobal/ASWGlobal.hsl"
+#endif
+
+#ifndef __TraceLevel_hsl__
+   #include "ASWStandard/TraceLevel/TraceLevel.hsl"
+#endif
+
+namespace AswStatusDialog
+{
+   //----- Member - Global-----
+   static global object gAswStatusDialog_objViewController;
+   static global variable gAswStatusDialog_blnIsInitialized(hslFalse);   
+   
+   private function CheckString(variable iVariable, variable i_strVariableName) variable;   
+
+   //============================== AswStatusDialog ==============================   
+
+   //#################################################################################################
+   // COM Object
+   //#################################################################################################
+
+   //---------------------------------------------
+   // create the com object and shows the asw status dialog
+   // 
+   //
+   // Parameters:
+   // i_strTitleDialog: dialog title to be displayed.
+   // 
+   //
+   //
+   // Returns: (bool)
+   // - hslTrue  : Init executed successfully
+   // - hslFalse : Init could not be executed
+   //---------------------------------------------
+   function Initialize(variable i_strTitleDialog) variable
+   {      
+      variable strFunctionName;
+      variable blnSuccessfulExecuted;
+
+      strFunctionName = GetFunctionName();
+      
+      // trace input member
+//      TRACELEVEL::Debug_Trace4(strFunctionName, " [in] i_strTitleDialog = ", i_strTitleDialog, "");
+
+      if(!CheckString(i_strTitleDialog, "i_strTitleDialog")) return(hslFalse);
+
+      onerror goto com_load_error;
+      
+      // create object
+      gAswStatusDialog_objViewController.CreateObject("Hamilton.AswStatusDialog");
+      gAswStatusDialog_blnIsInitialized = hslTrue;
+      
+      blnSuccessfulExecuted = gAswStatusDialog_objViewController.InitializeAswStatusDialog(i_strTitleDialog, GetHWnd());
+      if (blnSuccessfulExecuted != hslTrue)
+      {
+//         TRACELEVEL::Debug_Trace4(strFunctionName, " error: The function ", "InitializeAswStatusDialog", " is failed!");
+         return (hslFalse);
+      }
+
+//      TRACELEVEL::Debug_Trace4(strFunctionName, " No Error", "", "");
+      return(hslTrue);
+      
+      // COM-Object can not be instantised
+      com_load_error:
+      {
+         return(hslFalse);
+      }
+   }
+
+   //---------------------------------------------
+   // release the com object and close the asw status dialog
+   //
+   // Returns: (bool)
+   // - hslTrue  : command executed successfully
+   // - hslFalse : command could not be executed
+   //---------------------------------------------
+   function Terminate() variable                   
+   {
+      variable strFunctionName;
+      variable blnSuccessfulExecuted;
+
+      strFunctionName = GetFunctionName();
+
+      gAswStatusDialog_blnIsInitialized = hslFalse;      
+
+      blnSuccessfulExecuted = gAswStatusDialog_objViewController.CloseAswStatusDialog();
+      
+      gAswStatusDialog_objViewController.ReleaseObject();
+
+      if (blnSuccessfulExecuted != hslTrue)
+      {
+//        TRACELEVEL::Debug_Trace4(strFunctionName, " Error: The function ", "CloseAswStatusDialog", " is failed!");
+         return (hslFalse);
+      }
+
+//       TRACELEVEL::Debug_Trace4(strFunctionName, " No Error", "", "");
+      return(hslTrue);
+   }    
+
+   //---------------------------------------------------------
+   // Displays the given text in the status window. The previous 
+   // window content will be removed before displaying the given text.
+   // Call this method with an empty string to clean up the status window. 
+   // 
+   //
+   // Parameters:
+   // i_strStatusText: Text associated with the control to be displayed.
+   // 
+   //
+   //
+   // Returns: (bool)
+   // - true: successful
+   // - false: error            
+   //---------------------------------------------------------
+   function SetStatusText(variable i_strStatusDialogText) variable
+	{
+      variable strFunctionName;
+      variable blnSuccessfulExecuted;
+
+      strFunctionName = GetFunctionName();
+
+      // trace input member
+//      TRACELEVEL::Debug_Trace4(strFunctionName, " [in] i_strStatusDialogText = ", i_strStatusDialogText, "");
+
+		if (gAswStatusDialog_blnIsInitialized==hslFalse)
+      {
+//         TRACELEVEL::Debug_Trace4(strFunctionName, "  error: -1.1 the com object is not initialized!", "", "");
+         return (hslFalse);
+      }
+
+      if(!CheckString(i_strStatusDialogText, "i_strStatusDialogText")) return(hslFalse);
+
+      blnSuccessfulExecuted = gAswStatusDialog_objViewController.SetTextIntoStatusDialogWindow(i_strStatusDialogText);
+      
+      if (blnSuccessfulExecuted != hslTrue)
+      {
+//         TRACELEVEL::Debug_Trace4(strFunctionName, " Error: The function ", strFunctionName, " is failed!");
+         return (hslFalse);
+      }
+
+//      TRACELEVEL::Debug_Trace4(strFunctionName, " No Error", "", "");
+      return (hslTrue);
+	}
+
+   //---------------------------------------------------------
+   // Appends the given text to the existing content in the status window.
+   //
+   // 
+   // Parameters:
+   // i_strTextToAppend: String object that should be append.
+   // 
+   //
+   //
+   // Returns: (bool)
+   // - true: successful
+   // - false: error         
+   //---------------------------------------------------------   
+   function AppendText(variable i_strTextToAppend) variable
+	{
+      variable strFunctionName;
+      variable blnSuccessfulExecuted;
+
+      strFunctionName = GetFunctionName();
+      
+      // trace input member
+//      TRACELEVEL::Debug_Trace4(strFunctionName, " [in] i_strTextToAppend = ", i_strTextToAppend, "");
+
+		if (gAswStatusDialog_blnIsInitialized==hslFalse)
+      {
+//         TRACELEVEL::Debug_Trace4(strFunctionName, "  error: -1.1 the com object is not initialized!", "", "");
+         return (hslFalse);
+      }
+
+      if(!CheckString(i_strTextToAppend, "i_strTextToAppend")) return(hslFalse);
+
+      blnSuccessfulExecuted = gAswStatusDialog_objViewController.AppendText(i_strTextToAppend);
+      
+      if (blnSuccessfulExecuted != hslTrue)
+      {
+//         TRACELEVEL::Debug_Trace4(strFunctionName, " Error: The function ", strFunctionName, " is failed!");
+         return (hslFalse);
+      }
+
+//      TRACELEVEL::Debug_Trace4(strFunctionName, " No Error", "", "");
+      return (hslTrue);
+   }
+
+    //------------------------------------------------------
+    // Check whether the variable is of type string
+    //------------------------------------------------------
+    private function CheckString(variable i_varValue, variable i_strVariableName) variable
+    {
+      string strTypeIdentifier("");
+      variable strFunctionName;
+
+      strTypeIdentifier = GetType(i_varValue);
+      if(strTypeIdentifier.Compare(hslString) == 0) return(hslTrue);
+      strFunctionName=GetFunctionName();
+      FormatTrace("AswStatusDialog", "Check input variable", 3, "Error: Variable " + i_strVariableName + " is not of type 'string'.");
+      return(hslFalse);
+    }
+
+} // AswStatusDialog
+
+#endif
+// $$author=Chris$$valid=0$$time=2023-05-24 21:23$$checksum=c01fcaa7$$length=084$$

@@ -1,0 +1,29 @@
+
+// this ALWAYS GENERATED file contains the sub-method library header
+// Generated at 02/07/2025 17:35:56
+
+#pragma once
+#ifndef HSL_RUNTIME
+namespace SCAP_STARPLUS {
+function _InitLibrary() { }
+function _ExitLibrary() { }
+function Connect( variable & _arrComports[], variable _blnTraceLevel, variable _blnSimMode, variable _blnTest ) void { }
+function Disconnect(  ) void { }
+function GetDoorState( variable & _blnDoorState1, variable & _blnDoorState2 ) void { }
+function GetFanSpeed( variable & _intFanSpeed1, variable & _intFanSpeed2 ) void { }
+function GetFanState( variable & _intFanState1, variable & _intFanState2 ) void { }
+function GetHepaFilterStatus( variable & _strHepaFilterStatus1, variable & _strHepaFilterStatus2 ) void { }
+function GetHumidity( variable & _fltHumidity1, variable & _fltHumidity2 ) void { }
+function GetLightState( variable & _intLightState1, variable & _intLightState2 ) void { }
+function GetPrefilterStatus( variable & _strPrefilterStatus1, variable & _strPrefilterStatus2 ) void { }
+function GetTemperature( variable & _strTemp1, variable & _strTemp2 ) void { }
+function SetFanSpeed( variable _intFanSpeed ) void { }
+function SetFanState( variable _blnFanState ) void { }
+function SetLightState( variable _blnLightState ) void { }
+} // namespace
+#endif
+
+#ifdef HSL_RUNTIME
+#include __filename__ ".hsi"
+#endif
+// $$author=ch33$$valid=0$$time=2025-07-02 17:35$$checksum=8bc46d07$$length=081$$

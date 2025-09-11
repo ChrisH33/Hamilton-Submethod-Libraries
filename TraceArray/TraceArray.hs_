@@ -1,0 +1,17 @@
+
+// this ALWAYS GENERATED file contains the sub-method library header
+// Generated at 20/06/2025 14:57:42
+
+#pragma once
+#ifndef HSL_RUNTIME
+namespace TRACEARRAY {
+function _InitLibrary() { }
+function _ExitLibrary() { }
+function TraceArray( variable _strDescription, variable & _arr1[], variable & _arr2[], variable & _arr3[], variable & _arr4[], variable & _arr5[], variable & _arr6[], variable & _arr7[], variable & _arr8[], variable & _arr9[], variable & _arr10[], variable & _arr11[], variable & _arr12[], variable & _arr13[], variable & _arr14[], variable & _arr15[], variable & _arr16[] ) void { }
+} // namespace
+#endif
+
+#ifdef HSL_RUNTIME
+#include __filename__ ".hsi"
+#endif
+// $$author=ch33$$valid=0$$time=2025-06-20 14:57$$checksum=be9ff7bc$$length=081$$

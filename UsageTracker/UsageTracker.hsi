@@ -1,0 +1,393 @@
+// {{{ 2 "IncludeGuard" "PragmaOnce"
+#pragma once
+// }} ""
+#include "HSLFilLib.hsl"
+#include "HSLStrLib.hsl"
+#include "HSLFileDirectoryLib.hsl"
+#include "HSLGetSerialNumber.hsl"
+#include "HSLErrLib.hsl"
+#include "HSLTimLib.hsl"
+/* {{ 2 "LibraryInsertLine" "" */ // }} ""
+// {{ 2 "TemplateIncludeBlock" ""
+#include "HSLMETEDLib.hs_"
+#include "HSLMECCLib.hs_"
+#include "HSLPTLLib.hsl"
+// }} ""
+// {{{ 2 "LibraryNamespace" "Begin"
+namespace USAGETRACKER {
+// }} ""
+variable _strOutputFilePath;
+variable _strTempPath;
+/* {{ 2 "VariableInsertLine" "" */ // }} ""
+// {{{ 2 "SubmethodForwardDeclaration" ""
+function MethodAbort( variable i_strStage ) void ;
+function MethodEnd(  ) void ;
+function MethodStart( device & ML_STAR, variable i_strMethodName ) void ;
+// }} ""
+function _InitLibrary() {
+// {{ 2 "AutoInitBlock" ""
+PTL::SetWashingStateDefault("RinseTime1", 5);
+PTL::SetWashingStateDefault("SoakTime1", 5);
+PTL::SetWashingStateDefault("FlowRate1", 11);
+PTL::SetWashingStateDefault("RinseTime2", 0);
+PTL::SetWashingStateDefault("SoakTime2", 0);
+PTL::SetWashingStateDefault("FlowRate2", 11);
+PTL::SetWashingStateDefault("DrainingTime", 10);
+PTL::SetWashingStateDefault("StartWashLiquid", 0);
+PTL::SetLoadingStateDefault("RecoveryOptionContinue", hslTrue);
+PTL::SetLoadingStateDefault("RecoveryOptionExclude", hslTrue);
+PTL::SetLoadingStateDefault("RecoveryOptionDefault", 0);
+PTL::SetLoadingStateDefault("KitLotCheckEnabled", hslFalse);
+// }} ""
+}
+function _ExitLibrary() {
+// {{ 2 "AutoExitBlock" ""
+// }} ""
+}
+// {{{ 5 "MethodStart" "Begin"
+function MethodStart( device & ML_STAR, variable i_strMethodName ) void {
+// }} ""
+private variable _strSerialNumber;
+private variable _strSystemPath;
+private variable _strOutputFolderPath;
+private variable _blnExists;
+private variable _strDate;
+private variable _strEndTime;
+private variable _strStartTime;
+private variable _strStartDate;
+private variable _strUserName;
+private file _hndOutputFile;
+private variable _strSchemaPath;
+private variable _strSuccess;
+// {{ 5 "MethodStart" "InitLocals"
+// }} ""
+// {{ 35 1 0 "7465e40e_694a_4e63_b355312c614d0da7" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 36 1 0 "e4dbf4ff_f517_4ebe_997ce6b6e6659d90" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 37 1 0 "eb9f9bfc_caa6_43d1_aa45679a1afac8fb" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 38 1 0 "95d40d7a_e8f7_46b8_bb9c3c08aeb0965f" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strSystemPath = FilGetSystemPath();
+// }} ""
+// {{{ 39 1 0 "9b2f86df_dcc0_4aa7_88c160c7b34de078" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strSerialNumber = GetSerialNumber(ML_STAR);
+// }} ""
+// {{{ 40 1 0 "90211633_0df8_492a_898240065cbd1ea9" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strOutputFolderPath = StrConcat4(_strSystemPath, Translate("\\UsageTracker_"), _strSerialNumber, Translate("\\"));
+// }} ""
+// {{ 41 1 0 "5fcc5139_3381_4d17_ad8c246bd67c0f11" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+/* {{ 1 "" "0" */ if(0){  /* }} "" */
+// {{{ 42 1 0 "6f0ba4c1_ae39_41cb_a7535c4b324e4c2d" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_blnExists = FileDirectoryLib::CheckIfDirectoryExists(_strOutputFolderPath);
+// }} ""
+// {{ 43 1 0 "0e6d1d4d_13bf_4139_a6823c480ffe626d" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (_blnExists == 1)
+{
+// }} ""
+// {{ 44 1 0 "a5235c7e_636f_4c32_bcc123ce476f8b15" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 45 1 0 "0e6d1d4d_13bf_4139_a6823c480ffe626d" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+else
+{
+// }} ""
+// {{{ 46 1 0 "bcc21363_dd4b_4a88_9ef97a9ffa795f18" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+FileDirectoryLib::CreateDirectory(_strOutputFolderPath);
+// }} ""
+// {{ 47 1 0 "0e6d1d4d_13bf_4139_a6823c480ffe626d" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+/* {{ 1 "" "1" */ } /* }} "" */
+// {{ 48 1 0 "691e85a0_a807_4424_936fd598071c9b23" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 49 1 0 "5643fe94_a8b7_4509_8025b1236f3c7d70" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strDate = TimGetFormattedDate(Translate("%Y - %B"));
+// }} ""
+// {{{ 50 1 0 "8a00bd11_2681_417a_bab285b6f59885ae" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strOutputFilePath = StrConcat4(_strOutputFolderPath, _strDate, Translate(".csv"), Translate(""));
+// }} ""
+// {{{ 51 1 0 "e697fbde_fbdd_4add_a143fde90a47b234" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strTempPath = StrConcat4(_strOutputFolderPath, Translate("Temp"), Translate(".csv"), Translate(""));
+// }} ""
+// {{ 52 1 0 "3464c953_a80a_4204_aa370625ed8c096a" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+MECC::TraceComment(Translate("---------- Get Users Name ----------"));
+// }} ""
+// {{ 53 1 0 "10f6e871_6983_4c1b_9b10448263b50895" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+MECC::TraceComment(Translate("---------- Write to OutputFile ----------"));
+// }} ""
+// {{{ 54 1 0 "06e26fec_07c1_43b5_b885d8fac951b930" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strStartDate = TimGetFormattedDate(Translate("%Y.%m.%d"));
+// }} ""
+// {{{ 55 1 0 "0b72e88b_6ffe_4584_8613426dc3d6d220" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strStartTime = TimGetFormattedTime(Translate("%H:%M:%S"));
+// }} ""
+// {{ 56 1 0 "5f17c7e2_1e72_4de2_944bb9f31de3f88f" "{B31F3543-5D80-11d4-A5EB-0050DA737D89}"
+_strEndTime = Translate("");
+// }} ""
+// {{ 57 1 0 "d08fea0d_39ba_494a_81cfe4a3ba765616" "{B31F3543-5D80-11d4-A5EB-0050DA737D89}"
+_strSuccess = Translate("No");
+// }} ""
+// {{ 58 1 0 "a587837e_55c4_4eba_8fd09a81ecf86c4d" "{B31F3534-5D80-11d4-A5EB-0050DA737D89}"
+_hndOutputFile.AddField("Method Name", i_strMethodName, hslString, 255);
+_hndOutputFile.AddField("Hamilton User", _strUserName, hslString, 255);
+_hndOutputFile.AddField("Start Date", _strStartDate, hslString, 255);
+_hndOutputFile.AddField("Start Time", _strStartTime, hslString, 255);
+_hndOutputFile.AddField("End Time", _strEndTime, hslString, 255);
+_hndOutputFile.AddField("Run Completed Successfully", _strSuccess, hslString, 255);
+_hndOutputFile.SetDelimiter(",");
+if( 0 == _hndOutputFile.Open(_strTempPath, hslAppend) )
+{
+    MECC::RaiseRuntimeErrorEx(-1523711743, MECC::IDS::stepNameFileOpen, MECC::IDS::errorStepFileOpenFailed, _strTempPath, "HxMetEdCompCmd");
+}
+// }} ""
+// {{ 59 1 0 "91dbd327_5d85_48ab_b218350a4ebe8a97" "{B31F3537-5D80-11d4-A5EB-0050DA737D89}"
+if( 0 == _hndOutputFile.WriteRecord() )
+{
+    MECC::RaiseRuntimeErrorEx(-1473380096, MECC::IDS::stepNameFileWrite, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
+}
+// }} ""
+// {{ 60 1 0 "9c3dabe0_d32b_490a_a12e9c81e1817220" "{B31F3538-5D80-11d4-A5EB-0050DA737D89}"
+if( 0 != _hndOutputFile.Close() )
+{
+    MECC::RaiseRuntimeErrorEx(-1456602880, MECC::IDS::stepNameFileClose, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
+}
+_hndOutputFile.RemoveFields();
+// }} ""
+// {{ 61 1 0 "dadd668a_ccaf_4870_b2427282e93f0b0a" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+MECC::TraceComment(Translate("---------- Delete Schema File ----------"));
+// }} ""
+/* {{ 1 "" "0" */ if(0){  /* }} "" */
+// {{{ 62 1 0 "98c78ed2_4c36_4f96_bf73f7e9fe373f55" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strSchemaPath = StrConcat4(_strOutputFolderPath, Translate(""), Translate("schema.ini"), Translate(""));
+// }} ""
+// {{{ 63 1 0 "052209d2_4987_456b_ac3cf73341414143" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_blnExists = FileDirectoryLib::CheckIfFileExists(_strSchemaPath);
+// }} ""
+// {{ 64 1 0 "93eb8eb6_94d2_4540_b137db05df0b7db9" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (_blnExists == 1)
+{
+// }} ""
+// {{ 65 1 0 "1a26ba45_2ede_47ba_aa981fca0bfebf73" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+MECC::TraceComment(Translate("schema file exists"));
+// }} ""
+// {{{ 66 1 0 "b3681490_8b83_4de2_92ad37090da6202b" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+FileDirectoryLib::DeleteFile(_strSchemaPath);
+// }} ""
+// {{ 67 1 0 "93eb8eb6_94d2_4540_b137db05df0b7db9" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+/* {{ 1 "" "1" */ } /* }} "" */
+// {{{ 5 "MethodStart" "End"
+}
+// }} ""
+// {{{ 5 "MethodEnd" "Begin"
+function MethodEnd(  ) void {
+// }} ""
+private variable _strEndTime;
+private variable _strMethodName;
+private variable _strSuccess;
+private variable _strStartTime;
+private variable _strStartDate;
+private variable _strUserName;
+private file _hndOutputFile;
+// {{ 5 "MethodEnd" "InitLocals"
+// }} ""
+// {{ 18 1 0 "4ebac831_942c_4c14_8fa5a1c4de56a02f" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 19 1 0 "d33bbfb7_b029_4db5_829e43c54c204794" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 20 1 0 "f22ed0f8_1af0_4dd2_906e43dbc6772f85" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 21 1 0 "c192972e_1ad5_4caf_9b4da60482e548ee" "{B31F3534-5D80-11d4-A5EB-0050DA737D89}"
+_hndOutputFile.AddField("Method Name", _strMethodName, hslString, 255);
+_hndOutputFile.AddField("Hamilton User", _strUserName, hslString, 255);
+_hndOutputFile.AddField("Start Date", _strStartDate, hslString, 255);
+_hndOutputFile.AddField("Start Time", _strStartTime, hslString, 255);
+_hndOutputFile.AddField("End Time", _strEndTime, hslString, 255);
+_hndOutputFile.AddField("Run Completed Successfully", _strSuccess, hslString, 255);
+_hndOutputFile.SetDelimiter(hslCSVDelimited);
+if( 0 == _hndOutputFile.Open(_strTempPath, hslRead) )
+{
+    MECC::RaiseRuntimeErrorEx(-1523711743, MECC::IDS::stepNameFileOpen, MECC::IDS::errorStepFileOpenFailed, _strTempPath, "HxMetEdCompCmd");
+}
+// }} ""
+// {{ 22 1 0 "03a1b39f_9ac6_4651_a1e203926a24abb2" "{B31F3535-5D80-11d4-A5EB-0050DA737D89}"
+_hndOutputFile.Seek(0, hslLast);
+// }} ""
+// {{ 23 1 0 "376cff55_97e1_4976_a948dbb62591cf18" "{B31F3536-5D80-11d4-A5EB-0050DA737D89}"
+if( 0 == _hndOutputFile.ReadRecord() )
+{
+    MECC::RaiseRuntimeErrorEx(-1490157312, MECC::IDS::stepNameFileRead, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
+}
+// }} ""
+// {{ 24 1 0 "adf1be7a_5d63_4d46_9f285959f55f1d67" "{B31F3538-5D80-11d4-A5EB-0050DA737D89}"
+if( 0 != _hndOutputFile.Close() )
+{
+    MECC::RaiseRuntimeErrorEx(-1456602880, MECC::IDS::stepNameFileClose, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
+}
+_hndOutputFile.RemoveFields();
+// }} ""
+// {{ 25 1 0 "2546a404_52f8_486d_b823ccdb99cda390" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+/* {{ 1 "" "0" */ if(0){  /* }} "" */
+// {{{ 26 1 0 "2312ab9a_fd15_4a0a_a4602855127edd91" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+FileDirectoryLib::DeleteFile(_strTempPath);
+// }} ""
+/* {{ 1 "" "1" */ } /* }} "" */
+// {{ 27 1 0 "13f314bd_0c28_494e_8002c731050cf1ad" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 28 1 0 "86c53f75_fb94_472a_a0e65802256d542c" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strEndTime = TimGetFormattedTime(Translate("%H:%M:%S"));
+// }} ""
+// {{ 29 1 0 "7d6e728c_325d_4293_b6ff38e4487f0ebb" "{B31F3543-5D80-11d4-A5EB-0050DA737D89}"
+_strSuccess = Translate("Yes");
+// }} ""
+// {{ 30 1 0 "9c15853e_9ff6_4e14_b108b364ec614114" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 31 1 0 "f7f51386_7d69_497f_987aac73e105ca72" "{B31F3534-5D80-11d4-A5EB-0050DA737D89}"
+_hndOutputFile.AddField("Method Name", _strMethodName, hslString, 255);
+_hndOutputFile.AddField("Hamilton User", _strUserName, hslString, 255);
+_hndOutputFile.AddField("Start Date", _strStartDate, hslString, 255);
+_hndOutputFile.AddField("Start Time", _strStartTime, hslString, 255);
+_hndOutputFile.AddField("End Time", _strEndTime, hslString, 255);
+_hndOutputFile.AddField("Run Completed Successfully", _strSuccess, hslString, 255);
+_hndOutputFile.SetDelimiter(hslCSVDelimited);
+if( 0 == _hndOutputFile.Open(_strOutputFilePath, hslAppend) )
+{
+    MECC::RaiseRuntimeErrorEx(-1523711743, MECC::IDS::stepNameFileOpen, MECC::IDS::errorStepFileOpenFailed, _strOutputFilePath, "HxMetEdCompCmd");
+}
+// }} ""
+// {{ 32 1 0 "d40c2b7f_504a_460c_80685755fac5d042" "{B31F3537-5D80-11d4-A5EB-0050DA737D89}"
+if( 0 == _hndOutputFile.WriteRecord() )
+{
+    MECC::RaiseRuntimeErrorEx(-1473380096, MECC::IDS::stepNameFileWrite, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
+}
+// }} ""
+// {{ 33 1 0 "de4979c8_19fa_4a62_b968da20c41d03ac" "{B31F3538-5D80-11d4-A5EB-0050DA737D89}"
+if( 0 != _hndOutputFile.Close() )
+{
+    MECC::RaiseRuntimeErrorEx(-1456602880, MECC::IDS::stepNameFileClose, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
+}
+_hndOutputFile.RemoveFields();
+// }} ""
+// {{{ 5 "MethodEnd" "End"
+}
+// }} ""
+// {{{ 5 "MethodAbort" "Begin"
+function MethodAbort( variable i_strStage ) void {
+// }} ""
+private variable _strEndTime;
+private variable _strMethodName;
+private variable _strSuccess;
+private variable _strStartTime;
+private variable _strStartDate;
+private variable _strUserName;
+private file _hndOutputFile;
+// {{ 5 "MethodAbort" "InitLocals"
+// }} ""
+// {{ 1 1 0 "518cbc6d_a354_4f83_b3716b112be256cf" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 2 1 0 "37fdec11_3bb3_4b27_8e25f5c7c1dac1d4" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 3 1 0 "c86cba36_ad7a_4e31_ba77d8eb6973f8f8" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 4 1 0 "1aecb469_5bbb_42af_b4caef8db0271636" "{B31F3534-5D80-11d4-A5EB-0050DA737D89}"
+_hndOutputFile.AddField("Method Name", _strMethodName, hslString, 255);
+_hndOutputFile.AddField("Hamilton User", _strUserName, hslString, 255);
+_hndOutputFile.AddField("Start Date", _strStartDate, hslString, 255);
+_hndOutputFile.AddField("Start Time", _strStartTime, hslString, 255);
+_hndOutputFile.AddField("End Time", _strEndTime, hslString, 255);
+_hndOutputFile.AddField("Run Completed Successfully", _strSuccess, hslString, 255);
+_hndOutputFile.SetDelimiter(hslCSVDelimited);
+if( 0 == _hndOutputFile.Open(_strTempPath, hslRead) )
+{
+    MECC::RaiseRuntimeErrorEx(-1523711743, MECC::IDS::stepNameFileOpen, MECC::IDS::errorStepFileOpenFailed, _strTempPath, "HxMetEdCompCmd");
+}
+// }} ""
+// {{ 5 1 0 "a3d222a1_ad28_4278_96b064d9f3cc13bb" "{B31F3535-5D80-11d4-A5EB-0050DA737D89}"
+_hndOutputFile.Seek(0, hslLast);
+// }} ""
+// {{ 6 1 0 "291abe81_22f7_4d63_bee5364fadea1847" "{B31F3536-5D80-11d4-A5EB-0050DA737D89}"
+if( 0 == _hndOutputFile.ReadRecord() )
+{
+    MECC::RaiseRuntimeErrorEx(-1490157312, MECC::IDS::stepNameFileRead, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
+}
+// }} ""
+// {{ 7 1 0 "23bcb8b9_8381_4f6e_96e01c8c31aeb95b" "{B31F3538-5D80-11d4-A5EB-0050DA737D89}"
+if( 0 != _hndOutputFile.Close() )
+{
+    MECC::RaiseRuntimeErrorEx(-1456602880, MECC::IDS::stepNameFileClose, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
+}
+_hndOutputFile.RemoveFields();
+// }} ""
+// {{ 8 1 0 "6c94af96_5bb9_488c_9a36e7e98fa10422" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+/* {{ 1 "" "0" */ if(0){  /* }} "" */
+// {{{ 9 1 0 "a95a4fae_e59f_4d13_983cbb497ca7a496" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+FileDirectoryLib::DeleteFile(_strTempPath);
+// }} ""
+/* {{ 1 "" "1" */ } /* }} "" */
+// {{ 10 1 0 "ba88c81c_3709_41c2_a684280d93199dbe" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 11 1 0 "d6d90380_6371_47b7_beb2344f74b710b8" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strEndTime = TimGetFormattedTime(Translate("%H:%M:%S"));
+// }} ""
+// {{{ 12 1 0 "bb44582b_2dcf_4f85_8b195d8d05277261" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strSuccess = StrConcat4(Translate("No, method aborted at "), Translate("'"), i_strStage, Translate("'"));
+// }} ""
+// {{ 13 1 0 "473afa89_ef4a_47e4_baeaf1cc85b3181f" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 14 1 0 "445a530b_0b9c_4127_a0f97f8f448b2236" "{B31F3534-5D80-11d4-A5EB-0050DA737D89}"
+_hndOutputFile.AddField("Method Name", _strMethodName, hslString, 255);
+_hndOutputFile.AddField("Hamilton User", _strUserName, hslString, 255);
+_hndOutputFile.AddField("Start Date", _strStartDate, hslString, 255);
+_hndOutputFile.AddField("Start Time", _strStartTime, hslString, 255);
+_hndOutputFile.AddField("End Time", _strEndTime, hslString, 255);
+_hndOutputFile.AddField("Run Completed Successfully", _strSuccess, hslString, 255);
+_hndOutputFile.SetDelimiter(hslCSVDelimited);
+if( 0 == _hndOutputFile.Open(_strOutputFilePath, hslAppend) )
+{
+    MECC::RaiseRuntimeErrorEx(-1523711743, MECC::IDS::stepNameFileOpen, MECC::IDS::errorStepFileOpenFailed, _strOutputFilePath, "HxMetEdCompCmd");
+}
+// }} ""
+// {{ 15 1 0 "2f0eaa7d_73f1_402c_b46aa8513c7c708c" "{B31F3537-5D80-11d4-A5EB-0050DA737D89}"
+if( 0 == _hndOutputFile.WriteRecord() )
+{
+    MECC::RaiseRuntimeErrorEx(-1473380096, MECC::IDS::stepNameFileWrite, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
+}
+// }} ""
+// {{ 16 1 0 "fd69449f_1fda_4792_a5c108e3c6a9f588" "{B31F3538-5D80-11d4-A5EB-0050DA737D89}"
+if( 0 != _hndOutputFile.Close() )
+{
+    MECC::RaiseRuntimeErrorEx(-1456602880, MECC::IDS::stepNameFileClose, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
+}
+_hndOutputFile.RemoveFields();
+// }} ""
+// {{{ 5 "MethodAbort" "End"
+}
+// }} ""
+/* {{ 2 "SubmethodInsertLine" "" */ // }} ""
+// {{{ 2 "LibraryNamespace" "End"
+} // library namespace
+// }} ""
+// $$author=ch33$$valid=0$$time=2022-11-09 17:01$$checksum=f86f00a5$$length=083$$

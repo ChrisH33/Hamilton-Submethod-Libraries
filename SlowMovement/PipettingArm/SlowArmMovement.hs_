@@ -1,0 +1,17 @@
+
+// this ALWAYS GENERATED file contains the sub-method library header
+// Generated at 12/09/2024 17:19:55
+
+#pragma once
+#ifndef HSL_RUNTIME
+namespace SLOWARMMOVEMENT {
+function _InitLibrary() { }
+function _ExitLibrary() { }
+function Sub1(  ) void { }
+} // namespace
+#endif
+
+#ifdef HSL_RUNTIME
+#include __filename__ ".hsi"
+#endif
+// $$author=ch33$$valid=0$$time=2024-09-12 17:19$$checksum=30235d01$$length=081$$

@@ -1,0 +1,400 @@
+// {{{ 2 "IncludeGuard" "PragmaOnce"
+#pragma once
+// }} ""
+#include "WSI\\HSLGetSerialNumber_WSI\\HSLGetSerialNumber_WSI.hsl"
+#include "HSLFileDirectoryLib.hsl"
+#include "HSLStrLib.hsl"
+#include "HSLTimLib.hsl"
+#include "EmailUtilities\\HSLEmailUtilLib.hsl"
+/* {{ 2 "LibraryInsertLine" "" */ // }} ""
+// {{ 2 "TemplateIncludeBlock" ""
+#include "HSLMETEDLib.hs_"
+#include "HSLMECCLib.hs_"
+#include "HSLPTLLib.hsl"
+// }} ""
+// {{{ 2 "LibraryNamespace" "Begin"
+namespace SLACKMESSENGER {
+// }} ""
+/* {{ 2 "VariableInsertLine" "" */ // }} ""
+// {{{ 2 "SubmethodForwardDeclaration" ""
+function Start_Check( device & ML_STAR, variable _strSlackDirectory ) variable ;
+function Update( device & ML_STAR, variable _strSlackDirectory, variable _strStart_Check, variable _intState ) void ;
+private function _Abstract(  ) void ;
+private function _TimeStamp(  ) variable ;
+private function _UploadCheck( variable _strPath ) variable ;
+// }} ""
+function _InitLibrary() {
+// {{ 2 "AutoInitBlock" ""
+PTL::SetWashingStateDefault("RinseTime1", 5);
+PTL::SetWashingStateDefault("SoakTime1", 5);
+PTL::SetWashingStateDefault("FlowRate1", 11);
+PTL::SetWashingStateDefault("RinseTime2", 0);
+PTL::SetWashingStateDefault("SoakTime2", 0);
+PTL::SetWashingStateDefault("FlowRate2", 11);
+PTL::SetWashingStateDefault("DrainingTime", 10);
+PTL::SetWashingStateDefault("StartWashLiquid", 0);
+PTL::SetLoadingStateDefault("RecoveryOptionContinue", hslTrue);
+PTL::SetLoadingStateDefault("RecoveryOptionExclude", hslTrue);
+PTL::SetLoadingStateDefault("RecoveryOptionDefault", 0);
+PTL::SetLoadingStateDefault("KitLotCheckEnabled", hslFalse);
+// }} ""
+}
+function _ExitLibrary() {
+// {{ 2 "AutoExitBlock" ""
+// }} ""
+}
+// {{{ 5 "Update" "Begin"
+function Update( device & ML_STAR, variable _strSlackDirectory, variable _strStart_Check, variable _intState ) void {
+// }} ""
+private variable _strSlackUploadDirectory;
+private variable _strEmail;
+private variable _strSlackMessagePath;
+private variable _strSerialNumber;
+private variable _strMethod;
+private variable _strMessage;
+private file _hnd;
+private variable _strSchemaPath;
+private variable _arrStates[];
+// {{ 5 "Update" "InitLocals"
+// }} ""
+// {{ 22 1 0 "6ad68298_44b9_47b5_b432ca582f32f7f3" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 23 1 0 "c39697d7_f522_4d39_93521f357e5bb70e" "{586C3429-F931-405f-9938-928E22C90BFA}"
+
+// }} ""
+// {{ 24 1 0 "6797bba5_ad10_44b0_9a34c14b8c639dc8" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 25 1 0 "3307486e_e727_47ab_b9b8029a1b66a2a9" "{B31F3543-5D80-11d4-A5EB-0050DA737D89}"
+_strMessage = Translate("Unknown");
+// }} ""
+// {{ 26 1 0 "4beb4cf0_0eb0_477a_ae5bb0b06870ee17" "{4900C1F7-0FB7-4033-8253-760BDB9354DC}"
+_arrStates.SetSize(0);
+// }} ""
+// {{ 27 1 0 "4a8d770b_666e_4e02_9c6de91a57739221" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 28 1 0 "26e66925_5da0_4084_baa2750e2bb0acfe" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrStates.AddAsLast(Translate("Completed"));
+// }} ""
+// {{ 29 1 0 "84f26488_b3f5_45cc_9d323974742ee24e" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrStates.AddAsLast(Translate("Aborted"));
+// }} ""
+// {{ 30 1 0 "7fabfb5e_9dbb_48dc_bb240a66851429f3" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrStates.AddAsLast(Translate("Tip Reload"));
+// }} ""
+// {{ 31 1 0 "e03a59f1_a22c_4a3a_97a2eb4c6725c9c1" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrStates.AddAsLast(Translate("Scheduled User Intervention"));
+// }} ""
+// {{ 32 1 0 "583bd816_dcb6_425a_84f2ee783bdf680e" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrStates.AddAsLast(Translate("Other"));
+// }} ""
+// {{ 33 1 0 "b12848bd_1fc3_43ff_9f81e1cf8f626ad1" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 34 1 0 "9747336d_41d8_4fe1_94f616de130073e6" "{3293659E-F71E-472f-AFB4-6A674E32B114}"
+onerror goto errLabel_F4B375A691A441dd92114CB59B432309 ;
+err.Clear();
+// }} ""
+// {{ 35 1 0 "3803f9d5_31cc_44bc_aaa58ec3a035ea8c" "{67A8F1C9-6546-41e9-AD2F-3C54F7818853}"
+_strMessage=_arrStates.GetAt(_intState-1);
+// }} ""
+// {{ 36 1 0 "9747336d_41d8_4fe1_94f616de130073e6" "{3293659E-F71E-472f-AFB4-6A674E32B114}"
+errLabel_F4B375A691A441dd92114CB59B432309 : {}
+onerror goto 0;
+if (err.GetId() != 0)   /* skip handler if no error */
+{
+// }} ""
+// {{ 37 1 0 "758c4116_926e_4974_9e50a2ac654b267e" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+MECC::TraceComment(Translate("Error identifying instrument state"));
+// }} ""
+// {{{ 38 1 0 "a2420a5a_bdac_4d9d_ab915ace7ff6299c" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+EmailUtilLib::SendEMail(Translate("ch33@sanger.ac.uk"), Translate("Slack Integrations Error"), Translate("Instrument state was not accessible"));
+// }} ""
+// {{ 39 1 0 "9747336d_41d8_4fe1_94f616de130073e6" "{3293659E-F71E-472f-AFB4-6A674E32B114}"
+}   /* end if from skip handler if no error */
+// }} ""
+// {{ 40 1 0 "c39697d7_f522_4d39_93521f357e5bb70e" "{586C3429-F931-405f-9938-928E22C90BFA}"
+
+// }} ""
+// {{ 41 1 0 "21f2e3f3_8d02_4625_b01e9f4938821bb4" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 42 1 0 "803dc722_6817_4235_9c2c4e182ea264fa" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strSerialNumber = GetSN(ML_STAR, 0);
+// }} ""
+// {{{ 43 1 0 "c7f43c3e_ba49_4481_b917e8c130ce1b0d" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strSlackMessagePath = StrConcat4(_strSlackUploadDirectory, Translate("\\"), _strSerialNumber, Translate("_Update.txt"));
+// }} ""
+// {{ 44 1 0 "99e21c36_965b_4bc8_b78c11ed1253eb7a" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 45 1 0 "e8644af1_4be9_4a82_b7ca743f5d78b246" "{7C4EF7A7-39BE-406a-897F-71F3A35B4093}"
+_strSlackUploadDirectory = _UploadCheck(_strSlackDirectory);
+// }} ""
+// {{ 46 1 0 "9f1a3414_ca17_4814_87b3e83c3fe4ed80" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (_strSlackUploadDirectory == "")
+{
+// }} ""
+// {{ 47 1 0 "2b4460b2_4d50_432b_ac3206142d70a10a" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 48 1 0 "3f8ef147_8fb2_4ecc_8f30406a4a321578" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strEmail = EmailUtilLib::GetCurrentRecieverAddress();
+// }} ""
+// {{{ 49 1 0 "ede41893_e082_42fb_9b73e7191cb793e7" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+EmailUtilLib::SendEMail(_strEmail, Translate("Hamilton Run"), Translate("Hi, please be aware that your Hamilton run requires intervention"));
+// }} ""
+// {{ 50 1 0 "9f1a3414_ca17_4814_87b3e83c3fe4ed80" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+else
+{
+// }} ""
+// {{ 51 1 0 "542e9588_3461_449a_b7861ebd495d3789" "{3293659E-F71E-472f-AFB4-6A674E32B114}"
+onerror goto errLabel_CED8448097B4485aAADC9BBE0D26DD95 ;
+err.Clear();
+// }} ""
+// {{{ 52 1 0 "ba49054b_0b83_4b7c_a9daf82f57e5be1f" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strMethod = GetMethodName(0);
+// }} ""
+// {{ 53 1 0 "4e962a14_3b0c_472d_a69259c9c082eb21" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 54 1 0 "c83f7d6f_d400_4879_904ffc071aad0c62" "{B31F3534-5D80-11d4-A5EB-0050DA737D89}"
+_hnd.AddField("Instrument", _strSerialNumber, hslString, 255);
+_hnd.AddField("State", _strMessage, hslString, 255);
+_hnd.AddField("Method", _strMethod, hslString, 255);
+_hnd.AddField("Start time", _strStart_Check, hslString, 255);
+_hnd.SetDelimiter(hslCSVDelimited);
+if( 0 == _hnd.Open(_strSlackMessagePath, hslWrite) )
+{
+    MECC::RaiseRuntimeErrorEx(-1523711743, MECC::IDS::stepNameFileOpen, MECC::IDS::errorStepFileOpenFailed, _strSlackMessagePath, "HxMetEdCompCmd");
+}
+// }} ""
+// {{ 55 1 0 "eea59ebf_47c9_4b3c_b87399fb5a1616f1" "{B31F3537-5D80-11d4-A5EB-0050DA737D89}"
+if( 0 == _hnd.WriteRecord() )
+{
+    MECC::RaiseRuntimeErrorEx(-1473380096, MECC::IDS::stepNameFileWrite, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
+}
+// }} ""
+// {{ 56 1 0 "f01d2299_8d55_4cbd_b5027fe25826e374" "{B31F3538-5D80-11d4-A5EB-0050DA737D89}"
+if( 0 != _hnd.Close() )
+{
+    MECC::RaiseRuntimeErrorEx(-1456602880, MECC::IDS::stepNameFileClose, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
+}
+_hnd.RemoveFields();
+// }} ""
+// {{ 57 1 0 "9ca106d3_4315_498c_a580543ce70791b2" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 58 1 0 "03271566_f53e_4dcd_a691efb81eccc9e6" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strSchemaPath = StrConcat4(_strSlackUploadDirectory, Translate("\\schema.ini"), Translate(""), Translate(""));
+// }} ""
+// {{{ 59 1 0 "33328a56_02da_4653_8133890b4f93424b" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+FileDirectoryLib::DeleteFile(_strSchemaPath);
+// }} ""
+// {{{ 60 1 0 "a485fc15_c2db_4023_81c5a0756830a87b" "{9EC997CD-FD3B-4280-811B-49E99DCF062C}"
+return;
+// }} ""
+// {{ 61 1 0 "542e9588_3461_449a_b7861ebd495d3789" "{3293659E-F71E-472f-AFB4-6A674E32B114}"
+errLabel_CED8448097B4485aAADC9BBE0D26DD95 : {}
+onerror goto 0;
+if (err.GetId() != 0)   /* skip handler if no error */
+{
+// }} ""
+// {{ 62 1 0 "adbd39f3_5642_4ec5_8b418b66802dbe64" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+MECC::TraceComment(Translate(">>>>> Issues generating csv update file for Slack <<<<<"));
+// }} ""
+// {{{ 63 1 0 "5e18d381_5323_4730_becc0012d0a951ad" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+EmailUtilLib::SendEMail(Translate("ch33@sanger.ac.uk"), Translate("Hamilton Method Complete"), Translate("There was an issue creating the csv file"));
+// }} ""
+// {{ 64 1 0 "542e9588_3461_449a_b7861ebd495d3789" "{3293659E-F71E-472f-AFB4-6A674E32B114}"
+}   /* end if from skip handler if no error */
+// }} ""
+// {{ 65 1 0 "9f1a3414_ca17_4814_87b3e83c3fe4ed80" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{{ 66 1 0 "c384d2b9_8f2d_41e4_bffc1c6eb988a43a" "{9EC997CD-FD3B-4280-811B-49E99DCF062C}"
+return;
+// }} ""
+// {{{ 5 "Update" "End"
+}
+// }} ""
+// {{{ 5 "_Abstract" "Begin"
+private function _Abstract(  ) void {
+// }} ""
+// {{ 5 "_Abstract" "InitLocals"
+// }} ""
+// {{ 68 1 0 "60500964_af1c_43e7_be1c04fe040b3845" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 69 1 0 "c3b35873_e049_454e_ad3f61f57f5df65e" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 5 "_Abstract" "End"
+}
+// }} ""
+// {{{ 5 "Start_Check" "Begin"
+function Start_Check( device & ML_STAR, variable _strSlackDirectory ) variable {
+// }} ""
+private variable _strSlackUploadDirectory;
+private variable _strTimeStamp;
+private variable _rtnValue;
+private variable _strEmailSender;
+private variable _strSN;
+private dialog customDialog383859227C554bd5B447B9BA3E38C85D;
+private variable _strEmail;
+// {{ 5 "Start_Check" "InitLocals"
+// }} ""
+// {{ 1 1 0 "a19948cb_6041_4282_b6d559e77c35bd46" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 2 1 0 "b9b92604_8356_45c9_96aa2653530d3fd4" "{586C3429-F931-405f-9938-928E22C90BFA}"
+
+// }} ""
+// {{{ 3 1 0 "b2286744_4481_4843_8ae8c903291ab992" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+EmailUtilLib::SetSMTPServerHostName(Translate("mail.internal.sanger.ac.uk"));
+// }} ""
+// {{{ 4 1 0 "7dd52aef_c4cd_4053_846fd73a33581a6d" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strSN = GetSN(ML_STAR, 0);
+// }} ""
+// {{{ 5 1 0 "c666c6a4_d2c4_45a9_bb8acc8fedbe5850" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strEmailSender = StrConcat2(_strSN, Translate("@Hamilton.ch"));
+// }} ""
+// {{{ 6 1 0 "b5a62fc3_b9ae_425c_a526c8be18c5e9f1" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+EmailUtilLib::SetEMailAddressOfSender(_strEmailSender);
+// }} ""
+// {{ 7 1 0 "b9b92604_8356_45c9_96aa2653530d3fd4" "{586C3429-F931-405f-9938-928E22C90BFA}"
+
+// }} ""
+// {{ 8 1 0 "decc6c0b_3da3_4b6b_a6cb70d329397d73" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 9 1 0 "ed05c5f3_9252_47ff_9e264455048af841" "{7C4EF7A7-39BE-406a-897F-71F3A35B4093}"
+_strSlackUploadDirectory = _UploadCheck(_strSlackDirectory);
+// }} ""
+// {{ 10 1 0 "914c95b9_95ae_456c_a1a461b9eafc7d7f" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (_strSlackUploadDirectory == "")
+{
+// }} ""
+// {{ 11 1 0 "28b0ebd1_70c3_4612_a6b0e1daabaae2c2" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 12 1 0 "8d3a7c20_8d0a_453a_bc68a1d37b441c80" "{998A7CCC-4374-484D-A6ED-E8A4F0EB71BA}"
+customDialog383859227C554bd5B447B9BA3E38C85D.InitCustomDialog( "8d3a7c20_8d0a_453a_bc68a1d37b441c80" );
+customDialog383859227C554bd5B447B9BA3E38C85D.ShowCustomDialog();
+_rtnValue = customDialog383859227C554bd5B447B9BA3E38C85D.GetCustomDialogProperty( "ReturnValue" );
+_strEmail = customDialog383859227C554bd5B447B9BA3E38C85D.GetCustomDialogProperty( "textBox1.Text" );
+// }} ""
+// {{ 13 1 0 "d20e5b8f_d56d_4927_a40a0ded6ea040b9" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (_rtnValue == 2)
+{
+// }} ""
+// {{ 14 1 0 "2c7714f4_8ca2_4db2_9c343ed2f7ec080f" "{930D6C31-8EFB-11d4-A3BA-002035848439}"
+abort;
+// }} ""
+// {{ 15 1 0 "d20e5b8f_d56d_4927_a40a0ded6ea040b9" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{{ 16 1 0 "3415d2aa_5fff_4e29_8c8d3e2248e462a2" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+EmailUtilLib::ChangeRecieverAddress(Translate("ch33@sanger.ac.uk"));
+// }} ""
+// {{ 17 1 0 "914c95b9_95ae_456c_a1a461b9eafc7d7f" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{ 18 1 0 "60513cbe_961f_44f6_b67d2ca0b05f7e64" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 19 1 0 "367fac39_fb14_4802_836c9cd6fd4c6f00" "{7C4EF7A7-39BE-406a-897F-71F3A35B4093}"
+_strTimeStamp = _TimeStamp();
+// }} ""
+// {{{ 20 1 0 "01629613_0f5a_4e8b_a5ca2c359d535448" "{9EC997CD-FD3B-4280-811B-49E99DCF062C}"
+return (_strTimeStamp);
+// }} ""
+// {{{ 5 "Start_Check" "End"
+}
+// }} ""
+// {{{ 5 "_UploadCheck" "Begin"
+private function _UploadCheck( variable _strPath ) variable {
+// }} ""
+private variable _strSlackUploadDirectory;
+private variable _blnExists;
+private variable _strSlackDirectory_Check;
+// {{ 5 "_UploadCheck" "InitLocals"
+// }} ""
+// {{ 76 1 0 "7e964dc1_a0de_43f9_9b554fa4f234c01b" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 77 1 0 "717f90dc_0067_4481_bcfaa9d01db5776d" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_blnExists = FileDirectoryLib::CheckIfDirectoryExists(_strPath);
+// }} ""
+// {{ 78 1 0 "e6ad07f8_c43a_41a2_bea71b3e87fed4ff" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (_blnExists == 1)
+{
+// }} ""
+// {{ 79 1 0 "3c803056_d5ab_4aa0_b9b617b29398eb43" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 80 1 0 "a29ae7f9_64d8_4a89_b794ba5dc9e4eac4" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strSlackDirectory_Check = StrConcat4(_strPath, Translate("\\Important_DoNotDelete.bmp"), Translate(""), Translate(""));
+// }} ""
+// {{{ 81 1 0 "d4a4b9cb_4b1a_41a0_95b39fabe726429d" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_blnExists = FileDirectoryLib::CheckIfFileExists(_strSlackDirectory_Check);
+// }} ""
+// {{ 82 1 0 "72c5d209_6131_448f_a6e7f44de7a51503" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (_blnExists == 1)
+{
+// }} ""
+// {{ 83 1 0 "87ca4446_49fd_426d_93ddf2e807fd0dc5" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 84 1 0 "76cd8df7_d549_40af_a91178a25dda4390" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strSlackUploadDirectory = StrConcat2(_strPath, Translate("\\Upload"));
+// }} ""
+// {{{ 85 1 0 "ff0e78eb_4e8a_428e_a23cf263fc124075" "{9EC997CD-FD3B-4280-811B-49E99DCF062C}"
+return (_strSlackUploadDirectory);
+// }} ""
+// {{ 86 1 0 "72c5d209_6131_448f_a6e7f44de7a51503" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{ 87 1 0 "e6ad07f8_c43a_41a2_bea71b3e87fed4ff" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{{ 88 1 0 "3f02c3d2_6b4f_4e00_af1315f739bd4361" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+EmailUtilLib::SendEMail(Translate("ch33@sanger.ac.uk"), Translate("Slack Integrations Error"), Translate("An instrument was unable to connect to the upload folder"));
+// }} ""
+// {{{ 89 1 0 "d64e9786_4309_47bd_8ed7bd803ba668f2" "{9EC997CD-FD3B-4280-811B-49E99DCF062C}"
+return (Translate(""));
+// }} ""
+// {{{ 5 "_UploadCheck" "End"
+}
+// }} ""
+// {{{ 5 "_TimeStamp" "Begin"
+private function _TimeStamp(  ) variable {
+// }} ""
+private variable _strTimeStamp;
+private variable _strTime;
+private variable _strDate;
+// {{ 5 "_TimeStamp" "InitLocals"
+// }} ""
+// {{{ 71 1 0 "6fd9c7a9_a5a4_425d_829e5da1ce40818d" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strTime = TimGetFormattedTime(Translate("%H:%M"));
+// }} ""
+// {{{ 72 1 0 "2c890d02_a131_42af_9d1c64462453020e" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strDate = TimGetFormattedDate(Translate("%d/%m/%y"));
+// }} ""
+// {{{ 73 1 0 "776171a1_97c7_4272_84f6946d36eb72a4" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strTimeStamp = StrConcat4(_strTime, Translate(" "), _strDate, Translate(""));
+// }} ""
+// {{{ 74 1 0 "cc6728e6_0a77_4798_816315b44f82d54c" "{9EC997CD-FD3B-4280-811B-49E99DCF062C}"
+return (_strTimeStamp);
+// }} ""
+// {{{ 5 "_TimeStamp" "End"
+}
+// }} ""
+/* {{ 2 "SubmethodInsertLine" "" */ // }} ""
+// {{{ 2 "LibraryNamespace" "End"
+} // library namespace
+// }} ""
+// $$author=ch33$$valid=0$$time=2025-08-07 16:20$$checksum=f9597b00$$length=083$$

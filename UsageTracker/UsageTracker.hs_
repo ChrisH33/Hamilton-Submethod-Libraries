@@ -1,0 +1,19 @@
+
+// this ALWAYS GENERATED file contains the sub-method library header
+// Generated at 09/11/2022 17:01:10
+
+#pragma once
+#ifndef HSL_RUNTIME
+namespace USAGETRACKER {
+function _InitLibrary() { }
+function _ExitLibrary() { }
+function MethodAbort( variable i_strStage ) void { }
+function MethodEnd(  ) void { }
+function MethodStart( device & ML_STAR, variable i_strMethodName ) void { }
+} // namespace
+#endif
+
+#ifdef HSL_RUNTIME
+#include __filename__ ".hsi"
+#endif
+// $$author=ch33$$valid=0$$time=2022-11-09 17:01$$checksum=a332b36f$$length=081$$

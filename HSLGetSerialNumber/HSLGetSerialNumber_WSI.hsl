@@ -1,0 +1,65 @@
+
+#ifndef __HSLGetSerialNumber_hsl__
+#define __HSLGetSerialNumber_hsl__	1
+
+#include "HSLStrLib.hsl"
+
+// Gets the serial number from the instrument (instrument must be initialized)
+function GetSN(device& ML_STAR, variable i_blnTrace) variable
+{
+	variable command("");								// Command string
+	variable parameter("");								// Parameter string
+	variable serialNumber("");							// Serial number
+	variable rc[];											// Low level step return values
+
+	// Get serial number
+	command = "C0RI";				// Request Installation data
+	parameter = "";
+	rc = ML_STAR.FirmwareCommand( "1e78330b_4cb4_456b_84d80d3b33e97e73" );
+	if (4 == rc.GetSize())
+   {
+		serialNumber = StrMid(rc.ElementAt(3), StrFind(rc.ElementAt(3), "sn"), 6);
+   }
+	if (i_blnTrace==1)
+   {
+      Trace("-- Hamilton SN: ", StrMakeUpper(serialNumber));
+   }
+   return(StrMakeUpper(serialNumber));
+}
+
+function GetMethodName(variable i_blnTrace) variable
+{
+   string strTemp("");
+   string strReturn("");
+   variable intPosition(0);
+
+   strTemp = GetMethodFileName();
+   intPosition = strTemp.GetLength() - StrReverseFind(strTemp, "\\") - 1;
+   strReturn = StrRight(strTemp, intPosition);
+   intPosition = strReturn.GetLength() - 4;
+   strReturn = StrLeft(strReturn, intPosition);
+   if (i_blnTrace==1)
+   {
+      Trace("-- Method Name = ", strReturn);
+   }
+   return(strReturn);
+}
+
+function GetMethodFolder(variable i_blnTrace) variable
+{
+   string strTemp("");
+   string strReturn("");
+   variable intPosition(0);
+
+   strTemp = GetMethodFileName();
+   intPosition = StrReverseFind(strTemp, "\\") + 1;
+   strReturn = StrLeft(strTemp, intPosition);
+
+   if (i_blnTrace==1)
+   {
+      Trace("-- Method Folder = ", strReturn);
+   }
+   return(strReturn);
+}
+#endif
+// $$author=ch33$$valid=0$$time=2025-03-07 15:25$$checksum=ab672cd5$$length=081$$
