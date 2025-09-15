@@ -2,7 +2,6 @@
 #pragma once
 // }} ""
 #include "HSLFileDirectoryLib.hsl"
-#include "HSLStrLib.hsl"
 #include "HSLFilLib.hsl"
 /* {{ 2 "LibraryInsertLine" "" */ // }} ""
 // {{ 2 "TemplateIncludeBlock" ""
@@ -14,7 +13,7 @@ namespace FINDDBPATH {
 // }} ""
 /* {{ 2 "VariableInsertLine" "" */ // }} ""
 // {{{ 2 "SubmethodForwardDeclaration" ""
-function GetFilePaths( variable & o_arrConfigFilePaths[] ) void ;
+function GetFilePaths( variable & _arr[] ) void ;
 // }} ""
 function _InitLibrary() {
 // {{ 2 "AutoInitBlock" ""
@@ -25,107 +24,115 @@ function _ExitLibrary() {
 // }} ""
 }
 // {{{ 5 "GetFilePaths" "Begin"
-function GetFilePaths( variable & o_arrConfigFilePaths[] ) void {
+function GetFilePaths( variable & _arr[] ) void {
 // }} ""
-private variable _strAccessDBFilePath;
-private variable _loopCounter1;
-private variable _strJSONConfigFilePath;
-private variable _rtnSuccess;
-private variable _strFolderPath;
 private variable _intArrSize;
-private variable _loopCounter2;
+private variable _strFolderPath;
+private variable _strFilePath;
+private variable _loopCounter1;
+private variable _rtn;
 // {{ 5 "GetFilePaths" "InitLocals"
 // }} ""
-// {{ 1 1 0 "6b593263_18cc_480d_aa979bbfb06b88e2" "{72EACF88-8D49-43e3-92C8-2F90E81E3260}"
-_intArrSize=o_arrConfigFilePaths.GetSize();
-// }} ""
-// {{ 2 1 0 "adf84ed5_f815_4aff_b72352cc4e698b4d" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
-if (_intArrSize == 0)
-{
-// }} ""
-// {{ 3 1 0 "2bdb9f29_282f_46e1_898edfb16c0b32e3" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+// {{ 1 1 0 "81874da2_5070_4901_8097df4449a278eb" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
 
 // }} ""
-// {{{ 4 1 0 "42438e1f_a5d5_417d_a68078b3533a86f8" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+// {{ 2 1 0 "7675af49_de8e_40e3_a8ab3aa7ce6b61ad" "{72EACF88-8D49-43e3-92C8-2F90E81E3260}"
+_intArrSize=_arr.GetSize();
+// }} ""
+// {{ 3 1 0 "a2e79f9f_456d_4b92_a43ac0c65a8158cd" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (_intArrSize != 0)
+{
+// }} ""
+// {{{ 4 1 0 "0ecd568e_e9ea_4d1d_922bd856b29e5e02" "{9EC997CD-FD3B-4280-811B-49E99DCF062C}"
+return;
+// }} ""
+// {{ 5 1 0 "a2e79f9f_456d_4b92_a43ac0c65a8158cd" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{ 6 1 0 "d90e6bd9_bfba_44c1_b22318f366318e99" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 7 1 0 "4ce7d7d3_9ef2_4f3f_99691ad2d6873e91" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
 _strFolderPath = FilGetMethodsPath();
 // }} ""
-// {{ 5 1 0 "2baed0bf_fe45_455c_b1ca5c2c2f38e911" "{B31F3532-5D80-11d4-A5EB-0050DA737D89}"
+// {{ 8 1 0 "13aeb1bf_a213_49e3_9d0845dac16b6db4" "{4900C1F7-0FB7-4033-8253-760BDB9354DC}"
+_arr.SetSize(0);
+// }} ""
+// {{ 9 1 0 "63dd0db8_a4f1_46d7_bfedbe287ee855d6" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 10 1 0 "be0cd0a4_649f_4235_ac32477a311b71a7" "{586C3429-F931-405f-9938-928E22C90BFA}"
+
+// }} ""
+// {{ 11 1 0 "62c7ea26_0cb0_4621_9e7959947c0875ac" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 12 1 0 "c739a490_c3c3_47a1_961393ae80728b48" "{B31F3544-5D80-11d4-A5EB-0050DA737D89}"
+_strFilePath = _strFolderPath + Translate("\\Config\\CellCultureTracking.mdb");
+// }} ""
+// {{ 13 1 0 "af733595_189f_4969_ba1631b33adf28eb" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arr.AddAsLast(_strFilePath);
+// }} ""
+// {{ 14 1 0 "60bf1425_fa15_4455_9c55ef452604b9d2" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 15 1 0 "9d740c9a_fc1b_48e6_9500c610fcd243a6" "{B31F3544-5D80-11d4-A5EB-0050DA737D89}"
+_strFilePath = _strFolderPath + Translate("\\Config\\CellCultureSettings.json");
+// }} ""
+// {{ 16 1 0 "7054271f_d71e_407e_aae7c3aa5b780345" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arr.AddAsLast(_strFilePath);
+// }} ""
+// {{ 17 1 0 "e0ca0102_6e19_4023_8f91945cfad1f11a" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 18 1 0 "92c05f08_2134_48a4_aca2bb89aa4b8209" "{B31F3544-5D80-11d4-A5EB-0050DA737D89}"
+_strFilePath = _strFolderPath + Translate("\\Config\\PipettingConfig.json");
+// }} ""
+// {{ 19 1 0 "1e8380b5_3fdb_4ea5_bb1f1784bba79968" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arr.AddAsLast(_strFilePath);
+// }} ""
+// {{ 20 1 0 "225ddc02_2b90_4222_aeb8eb0356f87c6c" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 21 1 0 "2fb747a1_32ca_4563_8f541e816b6e23b7" "{B31F3544-5D80-11d4-A5EB-0050DA737D89}"
+_strFilePath = _strFolderPath + Translate("\\Config\\TransportConfig.json");
+// }} ""
+// {{ 22 1 0 "14a2e073_6a5e_48e0_bf259a26241f7885" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arr.AddAsLast(_strFilePath);
+// }} ""
+// {{ 23 1 0 "be0cd0a4_649f_4235_ac32477a311b71a7" "{586C3429-F931-405f-9938-928E22C90BFA}"
+
+// }} ""
+// {{ 24 1 0 "9f2948cd_ea39_417f_994700b1da9a5666" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 25 1 0 "b4a3d896_76bb_426d_b45586be5d6d9e6b" "{72EACF88-8D49-43e3-92C8-2F90E81E3260}"
+_intArrSize=_arr.GetSize();
+// }} ""
+// {{ 26 1 0 "722bc8c0_7d60_40d4_afbad2e88f7a3d78" "{B31F3532-5D80-11d4-A5EB-0050DA737D89}"
 {
-for(_loopCounter1 = 0; _loopCounter1 < 2;)
+for(_loopCounter1 = 0; _loopCounter1 < _intArrSize;)
 {
 _loopCounter1 = _loopCounter1 + 1;
 // }} ""
-// {{ 6 1 0 "b5379ea0_ee65_40a7_9210e0fe9043e742" "{4900C1F7-0FB7-4033-8253-760BDB9354DC}"
-o_arrConfigFilePaths.SetSize(0);
+// {{{ 27 1 0 "34ae8e58_9ee9_4d7e_97d802e9949cfd91" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_rtn = FileDirectoryLib::CheckIfFileExists(_arr.ElementAt( _loopCounter1 -1));
 // }} ""
-// {{ 7 1 0 "523f28a2_2d7b_441d_8ca0025ccb5bda55" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
-
-// }} ""
-// {{{ 8 1 0 "159b5152_5b83_4049_9e6ef4d0ba9f1c9e" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
-_strAccessDBFilePath = StrConcat2(_strFolderPath, Translate("\\AutomatedCellCulture\\Config\\CellCultureTracking.mdb"));
-// }} ""
-// {{{ 9 1 0 "f77c7329_2c12_477f_9f57bb1c9ee8b26b" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
-_strJSONConfigFilePath = StrConcat2(_strFolderPath, Translate("\\AutomatedCellCulture\\Config\\CellCultureSettings.json"));
-// }} ""
-// {{ 10 1 0 "56d88bba_6dbf_4988_8be2380d98992d1e" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
-
-// }} ""
-// {{ 11 1 0 "bcd631cb_dd6a_4012_a34d77656b0493fe" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
-o_arrConfigFilePaths.AddAsLast(_strAccessDBFilePath);
-// }} ""
-// {{ 12 1 0 "3b7a0628_294b_4b98_a6eb3b2bf0875f78" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
-o_arrConfigFilePaths.AddAsLast(_strJSONConfigFilePath);
-// }} ""
-// {{ 13 1 0 "6f02136f_4832_4e69_b5e4de98398b15da" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
-
-// }} ""
-// {{ 14 1 0 "79bbcc3b_6f20_4479_acb748b1919d1f56" "{72EACF88-8D49-43e3-92C8-2F90E81E3260}"
-_intArrSize=o_arrConfigFilePaths.GetSize();
-// }} ""
-// {{ 15 1 0 "7ff265ff_9a7f_407e_97b0c4c2ef7118f2" "{B31F3532-5D80-11d4-A5EB-0050DA737D89}"
-{
-for(_loopCounter2 = 0; _loopCounter2 < _intArrSize;)
-{
-_loopCounter2 = _loopCounter2 + 1;
-// }} ""
-// {{{ 16 1 0 "654be7b7_f864_4ba7_95268d24298ada75" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
-_rtnSuccess = FileDirectoryLib::CheckIfFileExists(o_arrConfigFilePaths.ElementAt( _loopCounter2 -1));
-// }} ""
-// {{ 17 1 0 "120fe96d_0a30_437e_b4231ebf5fe84a6a" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
-if (_rtnSuccess == 0)
+// {{ 28 1 0 "f8125fcd_7f3c_45b7_949a96faaf13cc0e" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (_rtn == 0)
 {
 // }} ""
-// {{ 18 1 0 "d051df76_13fd_4d11_bc1cf645c21fdbdf" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+// {{ 29 1 0 "ecac49bc_68f8_40d7_805486cc264cc7e1" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
 
 // }} ""
-Trace("!! Hamilton could not locate ", o_arrConfigFilePaths[_loopCounter1]);
-// {{ 20 1 0 "49b64226_071b_4c3a_811e18bd86a661a5" "{930D6C31-8EFB-11d4-A3BA-002035848439}"
+Trace("!! Hamilton could not locate ", _arr[_loopCounter1]);
 abort;
-// }} ""
-// {{ 21 1 0 "120fe96d_0a30_437e_b4231ebf5fe84a6a" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+// {{ 31 1 0 "f8125fcd_7f3c_45b7_949a96faaf13cc0e" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
 }
 // }} ""
-// {{ 22 1 0 "7ff265ff_9a7f_407e_97b0c4c2ef7118f2" "{B31F3532-5D80-11d4-A5EB-0050DA737D89}"
+// {{ 32 1 0 "722bc8c0_7d60_40d4_afbad2e88f7a3d78" "{B31F3532-5D80-11d4-A5EB-0050DA737D89}"
 }
 }
-// }} ""
-// {{ 23 1 0 "2baed0bf_fe45_455c_b1ca5c2c2f38e911" "{B31F3532-5D80-11d4-A5EB-0050DA737D89}"
-}
-}
-// }} ""
-// {{ 24 1 0 "adf84ed5_f815_4aff_b72352cc4e698b4d" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
-}
-else
-{
-// }} ""
-// {{ 25 1 0 "98f3bbea_31e2_4725_b320ae21aaa2cff1" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
-
-// }} ""
-// {{ 26 1 0 "adf84ed5_f815_4aff_b72352cc4e698b4d" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
-}
-// }} ""
-// {{{ 27 1 0 "7ae6f292_50e3_4dac_9587e0aa279bd3eb" "{9EC997CD-FD3B-4280-811B-49E99DCF062C}"
-return;
 // }} ""
 // {{{ 5 "GetFilePaths" "End"
 }
@@ -134,4 +141,4 @@ return;
 // {{{ 2 "LibraryNamespace" "End"
 } // library namespace
 // }} ""
-// $$author=ch33$$valid=0$$time=2025-09-15 08:16$$checksum=0f890886$$length=083$$
+// $$author=ch33$$valid=0$$time=2025-09-15 10:00$$checksum=9f47992a$$length=083$$

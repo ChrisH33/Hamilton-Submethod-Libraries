@@ -1,17 +1,17 @@
 
 // this ALWAYS GENERATED file contains the sub-method library header
-// Generated at 15/09/2025 08:16:06
+// Generated at 15/09/2025 10:00:18
 
 #pragma once
 #ifndef HSL_RUNTIME
 namespace FINDDBPATH {
 function _InitLibrary() { }
 function _ExitLibrary() { }
-function GetFilePaths( variable & o_arrConfigFilePaths[] ) void { }
+function GetFilePaths( variable & _arr[] ) void { }
 } // namespace
 #endif
 
 #ifdef HSL_RUNTIME
 #include __filename__ ".hsi"
 #endif
-// $$author=ch33$$valid=0$$time=2025-09-15 08:16$$checksum=eb926c5e$$length=081$$
+// $$author=ch33$$valid=0$$time=2025-09-15 10:00$$checksum=a909958a$$length=081$$
