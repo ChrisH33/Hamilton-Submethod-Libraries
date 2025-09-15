@@ -234,4 +234,4 @@ _strFWParameter = StrConcat2("zr", StrRight(StrConcat2("000000", StrIStr(MthCeil
 // {{{ 2 "LibraryNamespace" "End"
 } // library namespace
 // }} ""
-// $$author=Hamilton$$valid=0$$time=2023-07-05 09:56$$checksum=17483f02$$length=087$$
+// $$author=ch33$$valid=0$$time=2025-09-15 08:16$$checksum=aa241b6f$$length=083$$

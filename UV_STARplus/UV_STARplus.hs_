@@ -1,6 +1,6 @@
 
 // this ALWAYS GENERATED file contains the sub-method library header
-// Generated at 08/11/2024 09:25:32
+// Generated at 15/09/2025 08:15:27
 
 #pragma once
 #ifndef HSL_RUNTIME
@@ -14,4 +14,4 @@ function Lights( variable blnLights, timer & tmrUVLightOn, device & ML_STAR ) vo
 #ifdef HSL_RUNTIME
 #include __filename__ ".hsi"
 #endif
-// $$author=ch33$$valid=0$$time=2024-11-08 09:25$$checksum=9136c283$$length=081$$
+// $$author=ch33$$valid=0$$time=2025-09-15 08:15$$checksum=50c59625$$length=081$$

@@ -1,6 +1,6 @@
 
 // this ALWAYS GENERATED file contains the sub-method library header
-// Generated at 02/07/2025 17:35:56
+// Generated at 15/09/2025 08:16:06
 
 #pragma once
 #ifndef HSL_RUNTIME
@@ -26,4 +26,4 @@ function SetLightState( variable _blnLightState ) void { }
 #ifdef HSL_RUNTIME
 #include __filename__ ".hsi"
 #endif
-// $$author=ch33$$valid=0$$time=2025-07-02 17:35$$checksum=8bc46d07$$length=081$$
+// $$author=ch33$$valid=0$$time=2025-09-15 08:16$$checksum=6e5086aa$$length=081$$

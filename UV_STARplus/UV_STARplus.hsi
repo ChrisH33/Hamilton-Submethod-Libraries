@@ -6,8 +6,8 @@
 #include "HSLStrLib.hsl"
 #include "HSLDevLib.hsl"
 #include "ASWStandard\\ASWGlobal\\ASWGlobal.hsl"
-#include "SCAP_STARplus.hs_"
-#include "SangerGeneral.hs_"
+#include "WSI\\SCAP_STARplus\\SCAP_STARplus.hs_"
+#include "WSI\\CellCulture\\SangerGeneral.hs_"
 /* {{ 2 "LibraryInsertLine" "" */ // }} ""
 // {{ 2 "TemplateIncludeBlock" ""
 #include "HSLMETEDLib.hs_"
@@ -443,4 +443,4 @@ return (0);
 // {{{ 2 "LibraryNamespace" "End"
 } // library namespace
 // }} ""
-// $$author=ch33$$valid=0$$time=2024-11-08 09:25$$checksum=c328c06b$$length=083$$
+// $$author=ch33$$valid=0$$time=2025-09-15 08:15$$checksum=4c08b18f$$length=083$$

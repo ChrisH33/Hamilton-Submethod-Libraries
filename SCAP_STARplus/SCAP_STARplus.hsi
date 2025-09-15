@@ -1,7 +1,7 @@
 // {{{ 2 "IncludeGuard" "PragmaOnce"
 #pragma once
 // }} ""
-#include "Hamilton HSLCap\\HSLCap.hsl"
+#include "Device Sub-method Libraries\\HSLCap\\HSLCap.hsl"
 #include "HSLTrcLib.hsl"
 #include "ASWStandard\\TraceLevel\\TraceLevel.hsl"
 /* {{ 2 "LibraryInsertLine" "" */ // }} ""
@@ -699,4 +699,4 @@ TRACELEVEL::Trace_04(TRACE_LEVEL_DEBUG, Translate("-- [SCAP] Set Light State: ")
 // {{{ 2 "LibraryNamespace" "End"
 } // library namespace
 // }} ""
-// $$author=ch33$$valid=0$$time=2025-07-02 17:35$$checksum=d625be17$$length=083$$
+// $$author=ch33$$valid=0$$time=2025-09-15 08:16$$checksum=0f475e61$$length=083$$

@@ -1,6 +1,6 @@
 
 // this ALWAYS GENERATED file contains the sub-method library header
-// Generated at 25/07/2025 15:52:12
+// Generated at 15/09/2025 08:16:06
 
 #pragma once
 #ifndef HSL_RUNTIME
@@ -14,4 +14,4 @@ function GetJSONEntry( variable i_strJSONFilePath, variable i_strSearch, variabl
 #ifdef HSL_RUNTIME
 #include __filename__ ".hsi"
 #endif
-// $$author=ch33$$valid=0$$time=2025-07-25 15:52$$checksum=4ad93aa8$$length=081$$
+// $$author=ch33$$valid=0$$time=2025-09-15 08:16$$checksum=031d3b9a$$length=081$$

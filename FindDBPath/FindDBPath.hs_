@@ -1,6 +1,6 @@
 
 // this ALWAYS GENERATED file contains the sub-method library header
-// Generated at 17/06/2025 14:34:08
+// Generated at 15/09/2025 08:16:06
 
 #pragma once
 #ifndef HSL_RUNTIME
@@ -14,4 +14,4 @@ function GetFilePaths( variable & o_arrConfigFilePaths[] ) void { }
 #ifdef HSL_RUNTIME
 #include __filename__ ".hsi"
 #endif
-// $$author=ch33$$valid=0$$time=2025-06-17 14:34$$checksum=05a883d1$$length=081$$
+// $$author=ch33$$valid=0$$time=2025-09-15 08:16$$checksum=eb926c5e$$length=081$$

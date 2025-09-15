@@ -1,11 +1,11 @@
 // {{{ 2 "IncludeGuard" "PragmaOnce"
 #pragma once
 // }} ""
-#include "WSI\\HSLGetSerialNumber_WSI\\HSLGetSerialNumber_WSI.hsl"
+#include "WSI\\HSLGetSerialNumber\\HSLGetSerialNumber_WSI.hsl"
 #include "HSLFileDirectoryLib.hsl"
 #include "HSLStrLib.hsl"
 #include "HSLTimLib.hsl"
-#include "EmailUtilities\\HSLEmailUtilLib.hsl"
+#include "HSLEmailUtilLib\\HSLEmailUtilLib.hsl"
 /* {{ 2 "LibraryInsertLine" "" */ // }} ""
 // {{ 2 "TemplateIncludeBlock" ""
 #include "HSLMETEDLib.hs_"
@@ -397,4 +397,4 @@ return (_strTimeStamp);
 // {{{ 2 "LibraryNamespace" "End"
 } // library namespace
 // }} ""
-// $$author=ch33$$valid=0$$time=2025-08-07 16:20$$checksum=f9597b00$$length=083$$
+// $$author=ch33$$valid=0$$time=2025-09-15 08:16$$checksum=946cd7e0$$length=083$$

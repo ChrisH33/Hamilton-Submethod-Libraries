@@ -4,7 +4,7 @@
 #include "HSLFilLib.hsl"
 #include "HSLStrLib.hsl"
 #include "HSLFileDirectoryLib.hsl"
-#include "HSLGetSerialNumber.hsl"
+#include "WSI\\HSLGetSerialNumber\\HSLGetSerialNumber_WSI.hsl"
 #include "HSLErrLib.hsl"
 #include "HSLTimLib.hsl"
 /* {{ 2 "LibraryInsertLine" "" */ // }} ""
@@ -73,8 +73,8 @@ private variable _strSuccess;
 // {{{ 38 1 0 "95d40d7a_e8f7_46b8_bb9c3c08aeb0965f" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
 _strSystemPath = FilGetSystemPath();
 // }} ""
-// {{{ 39 1 0 "9b2f86df_dcc0_4aa7_88c160c7b34de078" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
-_strSerialNumber = GetSerialNumber(ML_STAR);
+// {{{ 39 1 0 "cb80add8_583a_47cc_a220f448cb7dd0ef" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strSerialNumber = GetSN(ML_STAR, 0);
 // }} ""
 // {{{ 40 1 0 "90211633_0df8_492a_898240065cbd1ea9" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
 _strOutputFolderPath = StrConcat4(_strSystemPath, Translate("\\UsageTracker_"), _strSerialNumber, Translate("\\"));
@@ -390,4 +390,4 @@ _hndOutputFile.RemoveFields();
 // {{{ 2 "LibraryNamespace" "End"
 } // library namespace
 // }} ""
-// $$author=ch33$$valid=0$$time=2022-11-09 17:01$$checksum=f86f00a5$$length=083$$
+// $$author=ch33$$valid=0$$time=2025-09-15 08:16$$checksum=d19094b7$$length=083$$

@@ -1,6 +1,6 @@
 
 // this ALWAYS GENERATED file contains the sub-method library header
-// Generated at 20/06/2025 14:57:42
+// Generated at 15/09/2025 08:16:06
 
 #pragma once
 #ifndef HSL_RUNTIME
@@ -14,4 +14,4 @@ function TraceArray( variable _strDescription, variable & _arr1[], variable & _a
 #ifdef HSL_RUNTIME
 #include __filename__ ".hsi"
 #endif
-// $$author=ch33$$valid=0$$time=2025-06-20 14:57$$checksum=be9ff7bc$$length=081$$
+// $$author=ch33$$valid=0$$time=2025-09-15 08:16$$checksum=04f87bc0$$length=081$$
