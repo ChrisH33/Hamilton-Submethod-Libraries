@@ -1,6 +1,6 @@
 
 // this ALWAYS GENERATED file contains the sub-method library header
-// Generated at 15/09/2025 08:16:06
+// Generated at 16/09/2025 17:56:58
 
 #pragma once
 #ifndef HSL_RUNTIME
@@ -14,4 +14,4 @@ function ParallelSway( variable & i_arrModules[], variable i_intSpeed, variable 
 #ifdef HSL_RUNTIME
 #include __filename__ ".hsi"
 #endif
-// $$author=ch33$$valid=0$$time=2025-09-15 08:16$$checksum=d7949d45$$length=081$$
+// $$author=ch33$$valid=0$$time=2025-09-16 17:56$$checksum=dd4369e0$$length=081$$

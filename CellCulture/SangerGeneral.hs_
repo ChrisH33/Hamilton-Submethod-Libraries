@@ -1,6 +1,6 @@
 
 // this ALWAYS GENERATED file contains the sub-method library header
-// Generated at 15/09/2025 08:10:40
+// Generated at 16/09/2025 17:56:58
 
 #pragma once
 #ifndef HSL_RUNTIME
@@ -9,6 +9,7 @@ function _InitLibrary() { }
 function _ExitLibrary() { }
 function AlignLabware( device & ML_STAR, sequence & _seq ) void { }
 function CreateChannelPattern( variable _intChannelNumber, variable _intCurrentLoop, variable _intMaxLoop, variable _intModulus ) variable {  return (0); }
+function DeleteFilesInFolder( variable i_strFolderPath ) variable {  return (0); }
 function DeleteSchema( variable _strFolderPath ) void { }
 function DoorLock( device & ML_STAR, variable _blnSim, variable _blnLock ) void { }
 function GetAvailableSeqPositions( sequence & _seq ) variable {  return (0); }
@@ -28,4 +29,4 @@ function WorklistEntryValidation( variable varEntry, variable blnRemoveSpaces ) 
 #ifdef HSL_RUNTIME
 #include __filename__ ".hsi"
 #endif
-// $$author=ch33$$valid=0$$time=2025-09-15 08:10$$checksum=6294ba78$$length=081$$
+// $$author=ch33$$valid=0$$time=2025-09-16 17:56$$checksum=4e960fd2$$length=081$$
