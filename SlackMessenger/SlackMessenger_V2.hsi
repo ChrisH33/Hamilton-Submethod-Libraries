@@ -1,0 +1,380 @@
+// {{{ 2 "IncludeGuard" "PragmaOnce"
+#pragma once
+// }} ""
+#include "WSI\\HSLGetSerialNumber\\HSLGetSerialNumber_WSI.hsl"
+#include "HSLFileDirectoryLib.hsl"
+#include "HSLStrLib.hsl"
+#include "HSLTimLib.hsl"
+#include "HSLML_STARLib.hsl"
+/* {{ 2 "LibraryInsertLine" "" */ // }} ""
+// {{ 2 "TemplateIncludeBlock" ""
+#include "HSLMETEDLib.hs_"
+#include "HSLMECCLib.hs_"
+#include "HSLPTLLib.hsl"
+// }} ""
+// {{{ 2 "LibraryNamespace" "Begin"
+namespace SLACKMESSENGER_V2 {
+// }} ""
+/* {{ 2 "VariableInsertLine" "" */ // }} ""
+// {{{ 2 "SubmethodForwardDeclaration" ""
+function SendUpdate( device & ML_STAR, variable _strMessage ) void ;
+private function _Abstract(  ) void ;
+private function _GetTimeStamp(  ) variable ;
+private function _GetUploadDir(  ) variable ;
+// }} ""
+function _InitLibrary() {
+// {{ 2 "AutoInitBlock" ""
+PTL::SetWashingStateDefault("RinseTime1", 5);
+PTL::SetWashingStateDefault("SoakTime1", 5);
+PTL::SetWashingStateDefault("FlowRate1", 11);
+PTL::SetWashingStateDefault("RinseTime2", 0);
+PTL::SetWashingStateDefault("SoakTime2", 0);
+PTL::SetWashingStateDefault("FlowRate2", 11);
+PTL::SetWashingStateDefault("DrainingTime", 10);
+PTL::SetWashingStateDefault("StartWashLiquid", 0);
+PTL::SetLoadingStateDefault("RecoveryOptionContinue", hslTrue);
+PTL::SetLoadingStateDefault("RecoveryOptionExclude", hslTrue);
+PTL::SetLoadingStateDefault("RecoveryOptionDefault", 0);
+PTL::SetLoadingStateDefault("KitLotCheckEnabled", hslFalse);
+// }} ""
+}
+function _ExitLibrary() {
+// {{ 2 "AutoExitBlock" ""
+// }} ""
+}
+// {{{ 5 "SendUpdate" "Begin"
+function SendUpdate( device & ML_STAR, variable _strMessage ) void {
+// }} ""
+private variable _strMethod;
+private file _hnd;
+private variable _strSchemaPath;
+private variable _strDirPath;
+private variable _strFilePath;
+private variable _strSN;
+private variable _strTimeStamp;
+private variable _blnSim;
+// {{ 5 "SendUpdate" "InitLocals"
+// }} ""
+// {{ 1 1 0 "391e866e_4673_44c6_9ddce9da15cce08f" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 2 1 0 "1c17475f_177a_479c_9bb37a8e45649852" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_blnSim = HSLML_STAR::IsSimulatorMode(ML_STAR);
+// }} ""
+// {{ 3 1 0 "76838cfd_47d1_4e23_98c2989772e18223" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (_blnSim == 1)
+{
+// }} ""
+Trace("SlackMessenger -- instrument in sim mode; no update created");
+// {{{ 5 1 0 "b1652b5e_1f2b_4bd7_a3a5c4d4b41db306" "{9EC997CD-FD3B-4280-811B-49E99DCF062C}"
+return;
+// }} ""
+// {{ 6 1 0 "76838cfd_47d1_4e23_98c2989772e18223" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{ 7 1 0 "a091b263_81dd_41ed_98007ed2d9950325" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 8 1 0 "0b0f6a73_447a_4744_80150cfa097a243a" "{7C4EF7A7-39BE-406a-897F-71F3A35B4093}"
+_strDirPath = _GetUploadDir();
+// }} ""
+// {{ 9 1 0 "65c3d214_3162_436f_98208858b699fb1f" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (_strDirPath == "")
+{
+// }} ""
+Trace("SlackMessenger -- Failed to locate/access the update directory");
+// {{{ 11 1 0 "0afef32e_2fdd_494a_abed070d165acfb8" "{9EC997CD-FD3B-4280-811B-49E99DCF062C}"
+return;
+// }} ""
+// {{ 12 1 0 "65c3d214_3162_436f_98208858b699fb1f" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{ 13 1 0 "82acc0f0_a2da_4163_a4cf92bec4e3faa9" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 14 1 0 "9001c0a8_8c31_4b21_ae6ae071af706aee" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strSN = GetSN(ML_STAR, 0);
+// }} ""
+// {{{ 15 1 0 "4fab79e0_9dad_4375_900f78cc60b2e2fd" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strFilePath = StrConcat4(_strDirPath, Translate("\\"), _strSN, Translate("_Update.txt"));
+// }} ""
+// {{ 16 1 0 "9e2ecf46_394a_4133_855aae7e310187a4" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 17 1 0 "685cf0c4_4339_4c71_9336fbdd44587676" "{7C4EF7A7-39BE-406a-897F-71F3A35B4093}"
+_strTimeStamp = _GetTimeStamp();
+// }} ""
+// {{ 18 1 0 "52e34f63_5077_49a0_adb5b0e6ea2f8bcd" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 19 1 0 "0ac7a20a_5788_4b06_be773a953c58581f" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strMethod = GetMethodName(0);
+// }} ""
+// {{ 20 1 0 "5d9613d5_c93d_4cef_a7ac71dd74b1aa3b" "{3293659E-F71E-472f-AFB4-6A674E32B114}"
+onerror goto errLabel_4F9A71A5C2134d479DD23B675C548276 ;
+err.Clear();
+// }} ""
+// {{ 21 1 0 "3f51754b_c72a_4805_8e9607deb5c887c7" "{B31F3534-5D80-11d4-A5EB-0050DA737D89}"
+_hnd.AddField("Instrument", _strSN, hslString, 255);
+_hnd.AddField("State", _strMessage, hslString, 255);
+_hnd.AddField("Method", _strMethod, hslString, 255);
+_hnd.AddField("UpdateTime", _strTimeStamp, hslString, 255);
+_hnd.SetDelimiter(hslCSVDelimited);
+if( 0 == _hnd.Open(_strFilePath, hslWrite) )
+{
+    MECC::RaiseRuntimeErrorEx(-1523711743, MECC::IDS::stepNameFileOpen, MECC::IDS::errorStepFileOpenFailed, _strFilePath, "HxMetEdCompCmd");
+}
+// }} ""
+// {{ 22 1 0 "5c315ad4_5a1d_4273_a3c112b382052fbb" "{B31F3537-5D80-11d4-A5EB-0050DA737D89}"
+if( 0 == _hnd.WriteRecord() )
+{
+    MECC::RaiseRuntimeErrorEx(-1473380096, MECC::IDS::stepNameFileWrite, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
+}
+// }} ""
+// {{ 23 1 0 "eaac642a_7567_485d_ad9841832e0deb44" "{B31F3538-5D80-11d4-A5EB-0050DA737D89}"
+if( 0 != _hnd.Close() )
+{
+    MECC::RaiseRuntimeErrorEx(-1456602880, MECC::IDS::stepNameFileClose, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
+}
+_hnd.RemoveFields();
+// }} ""
+Trace("SlackMessenger -- successfully sent update file to ", _strDirPath);
+// {{ 25 1 0 "5d9613d5_c93d_4cef_a7ac71dd74b1aa3b" "{3293659E-F71E-472f-AFB4-6A674E32B114}"
+errLabel_4F9A71A5C2134d479DD23B675C548276 : {}
+onerror goto 0;
+if (err.GetId() != 0)   /* skip handler if no error */
+{
+// }} ""
+Trace("SlackMessenger -- Failed to create update file");
+// {{{ 27 1 0 "a48b49cd_6c45_46f3_9eb11ccf06f8b967" "{9EC997CD-FD3B-4280-811B-49E99DCF062C}"
+return;
+// }} ""
+// {{ 28 1 0 "5d9613d5_c93d_4cef_a7ac71dd74b1aa3b" "{3293659E-F71E-472f-AFB4-6A674E32B114}"
+}   /* end if from skip handler if no error */
+// }} ""
+// {{ 29 1 0 "e509c7b0_c9b2_4ede_8dae0ffbc622553a" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 30 1 0 "6e1c4a84_4fc6_48e4_95a3d628d9eecf21" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strSchemaPath = StrConcat2(_strDirPath, Translate("\\schema.ini"));
+// }} ""
+// {{{ 31 1 0 "b71b0590_c085_4af9_9da4cb5205af4c8c" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+FileDirectoryLib::DeleteFile(_strSchemaPath);
+// }} ""
+// {{{ 32 1 0 "756a1487_d908_4efb_bc84c492dfe78993" "{9EC997CD-FD3B-4280-811B-49E99DCF062C}"
+return;
+// }} ""
+// {{{ 5 "SendUpdate" "End"
+}
+// }} ""
+// {{{ 5 "_Abstract" "Begin"
+private function _Abstract(  ) void {
+// }} ""
+// {{ 5 "_Abstract" "InitLocals"
+// }} ""
+// {{ 34 1 0 "31910395_8431_463d_8de69fea431d29dd" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 35 1 0 "578f8780_9d23_4e86_bc12b60e8f6f5f58" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 5 "_Abstract" "End"
+}
+// }} ""
+// {{{ 5 "_GetTimeStamp" "Begin"
+private function _GetTimeStamp(  ) variable {
+// }} ""
+private variable _strTimeStamp;
+private variable _strTime;
+private variable _strDate;
+// {{ 5 "_GetTimeStamp" "InitLocals"
+// }} ""
+// {{{ 37 1 0 "6fd9c7a9_a5a4_425d_829e5da1ce40818d" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strTime = TimGetFormattedTime(Translate("%H:%M"));
+// }} ""
+// {{{ 38 1 0 "2c890d02_a131_42af_9d1c64462453020e" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strDate = TimGetFormattedDate(Translate("%d/%m/%y"));
+// }} ""
+// {{{ 39 1 0 "776171a1_97c7_4272_84f6946d36eb72a4" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strTimeStamp = StrConcat4(_strTime, Translate(" "), _strDate, Translate(""));
+// }} ""
+// {{{ 40 1 0 "cc6728e6_0a77_4798_816315b44f82d54c" "{9EC997CD-FD3B-4280-811B-49E99DCF062C}"
+return (_strTimeStamp);
+// }} ""
+// {{{ 5 "_GetTimeStamp" "End"
+}
+// }} ""
+// {{{ 5 "_GetUploadDir" "Begin"
+private function _GetUploadDir(  ) variable {
+// }} ""
+private variable _strDirPath;
+private variable _arrPossibleDirPaths[];
+private variable _intAlphabetSize;
+private variable loopCounter2;
+private variable _arrAlphabet[];
+private variable _strDirSubpath;
+private variable _strFilePath;
+private variable _blnExists;
+// {{ 5 "_GetUploadDir" "InitLocals"
+// }} ""
+// {{ 42 1 0 "7fca2a72_b5be_4626_ae0b3ba44221e05a" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 43 1 0 "bfa7f6c2_151f_4136_8e4e0a896b5834ee" "{4900C1F7-0FB7-4033-8253-760BDB9354DC}"
+_arrAlphabet.SetSize(0);
+// }} ""
+// {{ 44 1 0 "d5330c99_fe9e_4247_be66046382a3ba5d" "{586C3429-F931-405f-9938-928E22C90BFA}"
+
+// }} ""
+// {{ 45 1 0 "84016063_16a8_45eb_8dc6be656180a9b6" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("A"));
+// }} ""
+// {{ 46 1 0 "02069571_48fc_4c25_8d8d609000cca51f" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("B"));
+// }} ""
+// {{ 47 1 0 "3e3121e1_0217_4e5a_a54c685cbe4db980" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("C"));
+// }} ""
+// {{ 48 1 0 "1e5e0fad_c750_4871_882200c816858e55" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("D"));
+// }} ""
+// {{ 49 1 0 "d3edaa83_0c4f_4545_963be33035f82eb6" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("E"));
+// }} ""
+// {{ 50 1 0 "9327e5a0_6c06_4b41_b159309d624f0154" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("F"));
+// }} ""
+// {{ 51 1 0 "74bb65cd_3c7d_451e_bce8866df9baf88e" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("G"));
+// }} ""
+// {{ 52 1 0 "2caade4b_84e3_4a04_b7ec62436ff6eb7b" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("H"));
+// }} ""
+// {{ 53 1 0 "d378d838_543e_484b_bfc16acc41270367" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("I"));
+// }} ""
+// {{ 54 1 0 "0d35f26b_0b91_4989_b1254e2f504d82b8" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("J"));
+// }} ""
+// {{ 55 1 0 "a7ef0266_bba4_4aa4_a4bef02fe37d3939" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("K"));
+// }} ""
+// {{ 56 1 0 "2d903895_21c1_4205_b91e481f48d3f9c3" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("L"));
+// }} ""
+// {{ 57 1 0 "60b848a1_8c9a_4cca_8eeec74af1f17c98" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("M"));
+// }} ""
+// {{ 58 1 0 "2460d22a_4ec8_4d0e_b9d2f0a2c908274d" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("N"));
+// }} ""
+// {{ 59 1 0 "61af7e4f_b163_418e_a8af6668463b334e" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("O"));
+// }} ""
+// {{ 60 1 0 "d1b20621_4985_4a22_8ad6fcaf45c4c4e8" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("P"));
+// }} ""
+// {{ 61 1 0 "f171e3c8_c693_449b_95aa343a35670c5b" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("Q"));
+// }} ""
+// {{ 62 1 0 "f3eaefd1_2d81_4794_9d9836c1b2b78ed7" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("R"));
+// }} ""
+// {{ 63 1 0 "5b8e6332_29c8_49a4_b5c7fb70f99e4023" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("S"));
+// }} ""
+// {{ 64 1 0 "bb672f75_81a2_4bd0_844e647a694261ca" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("T"));
+// }} ""
+// {{ 65 1 0 "267ccc6e_a669_4ada_9b08d56044da2db2" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("U"));
+// }} ""
+// {{ 66 1 0 "876962b9_086e_475c_967701dfebb93834" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("V"));
+// }} ""
+// {{ 67 1 0 "551104ea_11dc_4a5b_a12be5df710e2b5a" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("W"));
+// }} ""
+// {{ 68 1 0 "f8e2a4e6_2fb1_471a_b354009bf2073122" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("X"));
+// }} ""
+// {{ 69 1 0 "6bba2c8a_b26f_47d1_b37db8a79a767a92" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("Y"));
+// }} ""
+// {{ 70 1 0 "27f39489_6e7c_4fed_ad731f3d950ef728" "{F17B7626-27CB-47f1-8477-8C4158339A6D}"
+_arrAlphabet.AddAsLast(Translate("Z"));
+// }} ""
+// {{ 71 1 0 "d5330c99_fe9e_4247_be66046382a3ba5d" "{586C3429-F931-405f-9938-928E22C90BFA}"
+
+// }} ""
+// {{ 72 1 0 "d5a6cd98_a528_4997_b208cbdd6eb40c48" "{72EACF88-8D49-43e3-92C8-2F90E81E3260}"
+_intAlphabetSize=_arrAlphabet.GetSize();
+// }} ""
+// {{ 73 1 0 "578b1226_d428_4a93_87a13baec8564394" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 74 1 0 "7b887a57_c558_453a_af4ede847d2bd68a" "{4900C1F7-0FB7-4033-8253-760BDB9354DC}"
+_arrPossibleDirPaths.SetSize(0);
+// }} ""
+// {{ 75 1 0 "5880fc75_5e97_471b_8d101b8f8e584f39" "{B31F3532-5D80-11d4-A5EB-0050DA737D89}"
+{
+for(loopCounter2 = 0; loopCounter2 < _intAlphabetSize;)
+{
+loopCounter2 = loopCounter2 + 1;
+// }} ""
+// {{{ 76 1 0 "c0b34e3e_34a5_4cec_84503304bb12fc1f" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strDirPath = StrConcat2(_arrAlphabet.ElementAt( loopCounter2 -1), Translate(":\\0.051 Research & Development\\Instrumentation\\SlackUpdates"));
+// }} ""
+// {{ 77 1 0 "d7c76ca7_3fcd_44d6_921e1ddbf32b2ecc" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 78 1 0 "ade480a5_c6a6_45d8_9e7921c9d84be5dc" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_blnExists = FileDirectoryLib::CheckIfDirectoryExists(_strDirPath);
+// }} ""
+// {{ 79 1 0 "fd9801d1_7976_4903_87e77ac021d03489" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (_blnExists == 1)
+{
+// }} ""
+// {{ 80 1 0 "39790b5c_5689_4e0b_8ec05ae81ee93cfb" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 81 1 0 "0ffbd675_d6c9_4cb9_85db82bebb774396" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strFilePath = StrConcat2(_strDirPath, Translate("\\Important_DoNotDelete.bmp"));
+// }} ""
+// {{{ 82 1 0 "bba1c82f_e300_40fe_8a106210ddf545bb" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_blnExists = FileDirectoryLib::CheckIfFileExists(_strFilePath);
+// }} ""
+// {{ 83 1 0 "a63697b9_b280_4367_9172181f0d940e6b" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (_blnExists == 1)
+{
+// }} ""
+// {{ 84 1 0 "e3058317_5a86_4969_b4009a6632bde392" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 85 1 0 "31428062_547b_47f9_af10fdd9ac7b84a6" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strDirSubpath = StrConcat2(_strDirPath, Translate("\\Upload"));
+// }} ""
+// {{{ 86 1 0 "ee625836_958a_44df_b300c3a87c0a6129" "{9EC997CD-FD3B-4280-811B-49E99DCF062C}"
+return (_strDirSubpath);
+// }} ""
+// {{ 87 1 0 "a63697b9_b280_4367_9172181f0d940e6b" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{ 88 1 0 "fd9801d1_7976_4903_87e77ac021d03489" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{ 89 1 0 "5880fc75_5e97_471b_8d101b8f8e584f39" "{B31F3532-5D80-11d4-A5EB-0050DA737D89}"
+}
+}
+// }} ""
+// {{{ 90 1 0 "b682fbe1_22dd_4bbe_843098db12ef4625" "{9EC997CD-FD3B-4280-811B-49E99DCF062C}"
+return (Translate(""));
+// }} ""
+// {{{ 5 "_GetUploadDir" "End"
+}
+// }} ""
+/* {{ 2 "SubmethodInsertLine" "" */ // }} ""
+// {{{ 2 "LibraryNamespace" "End"
+} // library namespace
+// }} ""
+// $$author=ch33$$valid=0$$time=2026-01-16 10:41$$checksum=3ca5e75f$$length=083$$
