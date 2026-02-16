@@ -65,7 +65,7 @@ _blnSim = HSLML_STAR::IsSimulatorMode(ML_STAR);
 if (_blnSim == 1)
 {
 // }} ""
-Trace("SlackMessenger -- instrument in sim mode; no update created");
+Trace("[SlackMes] -- Device in sim mode; no update");
 // {{{ 5 1 0 "b1652b5e_1f2b_4bd7_a3a5c4d4b41db306" "{9EC997CD-FD3B-4280-811B-49E99DCF062C}"
 return;
 // }} ""
@@ -377,4 +377,4 @@ return (Translate(""));
 // {{{ 2 "LibraryNamespace" "End"
 } // library namespace
 // }} ""
-// $$author=ch33$$valid=0$$time=2026-01-16 10:41$$checksum=3ca5e75f$$length=083$$
+// $$author=ch33$$valid=0$$time=2026-02-16 09:34$$checksum=c68e2064$$length=083$$

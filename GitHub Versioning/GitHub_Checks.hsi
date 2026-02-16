@@ -1,0 +1,237 @@
+// {{{ 2 "IncludeGuard" "PragmaOnce"
+#pragma once
+// }} ""
+#include "HSLFilLib.hsl"
+#include "HSLStrLib.hsl"
+#include "HSLFileDirectoryLib.hsl"
+#include "HSLTrcLib.hsl"
+/* {{ 2 "LibraryInsertLine" "" */ // }} ""
+// {{ 2 "TemplateIncludeBlock" ""
+#include "HSLMETEDLib.hs_"
+#include "HSLMECCLib.hs_"
+// }} ""
+// {{{ 2 "LibraryNamespace" "Begin"
+namespace GITHUB_CHECKS {
+// }} ""
+/* {{ 2 "VariableInsertLine" "" */ // }} ""
+// {{{ 2 "SubmethodForwardDeclaration" ""
+function GitFetch( variable _strGitRepo ) void ;
+// }} ""
+function _InitLibrary() {
+// {{ 2 "AutoInitBlock" ""
+// }} ""
+}
+function _ExitLibrary() {
+// {{ 2 "AutoExitBlock" ""
+// }} ""
+}
+// {{{ 5 "GitFetch" "Begin"
+function GitFetch( variable _strGitRepo ) void {
+// }} ""
+private variable _strMethodDir;
+private variable _strTempBatPath;
+private variable _strText;
+private file _hndBat;
+private variable _rtn;
+private variable _rtnGitState;
+private variable _strTempSchemaPath;
+private variable _strQuote;
+private variable _strBehind;
+private variable _strAhead;
+private variable _strGit;
+private variable strGit;
+private variable _strBatPath;
+private variable _strConfigPath;
+// {{ 5 "GitFetch" "InitLocals"
+// }} ""
+// {{ 1 1 0 "fe68eae6_84fa_45e4_ab8390c4422d6385" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+MECC::TraceComment(Translate("========== GitHub Checks =========="));
+// }} ""
+// {{ 2 1 0 "80abc311_a84f_46eb_aa7274f26179a128" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 3 1 0 "afcc8671_ce73_4116_874c4599a67ccb11" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strConfigPath = StrConcat2(Translate("C:\\Program Files (x86)\\HAMILTON\\Library\\WSI\\GitHub Versioning"), Translate("\\config.txt"));
+// }} ""
+// {{ 4 1 0 "3a238b6e_ad21_4620_a38725741470dde6" "{B31F3534-5D80-11d4-A5EB-0050DA737D89}"
+_hndBat.AddField(1, _strText, hslString);
+_hndBat.SetDelimiter(hslAsciiText);
+if( 0 == _hndBat.Open(_strConfigPath, hslWrite) )
+{
+    MECC::RaiseRuntimeErrorEx(-1523711743, MECC::IDS::stepNameFileOpen, MECC::IDS::errorStepFileOpenFailed, _strConfigPath, "HxMetEdCompCmd");
+}
+// }} ""
+// {{ 5 1 0 "3bad518a_713c_4e04_98a536f12d29b364" "{586C3429-F931-405f-9938-928E22C90BFA}"
+
+// }} ""
+// {{ 6 1 0 "eddfa5d4_10ee_4bf8_9f5b4da3911f3880" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 7 1 0 "067beadb_509f_46a4_85531622ca1cad70" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strText = StrConcat2(Translate("GIT=C:\Users\ch33\AppData\Local\Programs\Git\cmd\git.exe"), Translate("\n"));
+// }} ""
+// {{ 8 1 0 "69394b30_9d07_43f3_ae496f844d9c7b58" "{B31F3537-5D80-11d4-A5EB-0050DA737D89}"
+if( 0 == _hndBat.WriteRecord() )
+{
+    MECC::RaiseRuntimeErrorEx(-1473380096, MECC::IDS::stepNameFileWrite, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
+}
+// }} ""
+// {{ 9 1 0 "04927f50_945d_4a0f_bfc8310d837ad007" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 10 1 0 "14256c4e_e62b_424a_a68b614dfd331177" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strText = StrConcat2(Translate("REPO="), _strGitRepo);
+// }} ""
+// {{ 11 1 0 "27feed36_ac9b_4bc2_872dcefdd92eba1d" "{B31F3537-5D80-11d4-A5EB-0050DA737D89}"
+if( 0 == _hndBat.WriteRecord() )
+{
+    MECC::RaiseRuntimeErrorEx(-1473380096, MECC::IDS::stepNameFileWrite, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
+}
+// }} ""
+// {{ 12 1 0 "3bad518a_713c_4e04_98a536f12d29b364" "{586C3429-F931-405f-9938-928E22C90BFA}"
+
+// }} ""
+// {{ 13 1 0 "22c0200b_9733_4f25_bb4e716e24c1fea6" "{B31F3538-5D80-11d4-A5EB-0050DA737D89}"
+if( 0 != _hndBat.Close() )
+{
+    MECC::RaiseRuntimeErrorEx(-1456602880, MECC::IDS::stepNameFileClose, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
+}
+_hndBat.RemoveFields();
+// }} ""
+// {{ 14 1 0 "ccbf571d_125c_4172_92b00b261d060e01" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 15 1 0 "ed46f015_d551_437b_97b80be79c882414" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strBatPath = StrConcat2(Translate("C:\\Program Files (x86)\\HAMILTON\\Library\\WSI\\GitHub Versioning"), Translate("\\git-check.bat"));
+// }} ""
+// {{ 16 1 0 "30a54c6f_c55b_4019_982c21f9a8315484" "{B31F3545-5D80-11d4-A5EB-0050DA737D89}"
+{
+event localDummyEvent1;
+if( 0 == Shell(_strBatPath, hslHide, hslSynchronous, localDummyEvent1, _rtnGitState) )
+{
+    MECC::RaiseRuntimeErrorEx(-1238499072, MECC::IDS::stepNameShell, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
+}
+}
+// }} ""
+Trace(_rtnGitState);
+/* {{ 1 "" "0" */ if(0){  /* }} "" */
+// {{ 18 1 0 "a735ee33_f05b_4730_a5e1d56fa0a6be25" "{586C3429-F931-405f-9938-928E22C90BFA}"
+
+// }} ""
+// {{{ 19 1 0 "7462a9aa_e78a_44ce_abdf04d6ca259418" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_rtn = FileDirectoryLib::DeleteFile(_strTempBatPath);
+// }} ""
+// {{ 20 1 0 "5212caf6_1bcf_4333_b9f43bbd7fbe1aa2" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (_rtn == 1)
+{
+// }} ""
+// {{ 21 1 0 "7d0433b2_97b7_42a1_9e82b4534e53daf1" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 22 1 0 "c5b84d3f_2de4_41bd_afd04a90d7a639ed" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+TrcTrace(Translate("## There was an error removing the git-check file, located here: "), _strTempBatPath);
+// }} ""
+// {{{ 23 1 0 "83b474b4_ef86_4c2e_8be0e9e80b11176b" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+TrcTrace(Translate("## The method will now abort"), Translate(""));
+// }} ""
+// {{ 24 1 0 "1556c660_ffc2_4422_a788e3ef2e0bbd7c" "{930D6C31-8EFB-11d4-A3BA-002035848439}"
+abort;
+// }} ""
+// {{ 25 1 0 "5212caf6_1bcf_4333_b9f43bbd7fbe1aa2" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{{ 26 1 0 "aee9345f_be02_4c5d_a576693fb4d5b077" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_strTempSchemaPath = StrConcat2(_strMethodDir, Translate("\\schema.ini"));
+// }} ""
+// {{{ 27 1 0 "f3a00db4_f4c5_4978_a9ef43b783f935e6" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+_rtn = FileDirectoryLib::DeleteFile(_strTempSchemaPath);
+// }} ""
+// {{ 28 1 0 "eb0cc539_aa89_478f_91122d021dcb0b62" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (_rtn == 1)
+{
+// }} ""
+// {{ 29 1 0 "c222c99f_edd8_4fd3_945e5fac4c14d7cd" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 30 1 0 "0e63ad06_f652_4136_a24ec7bd1a29f898" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+TrcTrace(Translate("## There was an error removing the git-check schema file, located here: "), _strTempSchemaPath);
+// }} ""
+// {{{ 31 1 0 "de6f4851_bfb1_476f_b41ad45a5de907f6" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+TrcTrace(Translate("## The method will now abort"), Translate(""));
+// }} ""
+// {{ 32 1 0 "b9fd9106_31f4_414f_88740d3e964543e0" "{930D6C31-8EFB-11d4-A3BA-002035848439}"
+abort;
+// }} ""
+// {{ 33 1 0 "eb0cc539_aa89_478f_91122d021dcb0b62" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{ 34 1 0 "a735ee33_f05b_4730_a5e1d56fa0a6be25" "{586C3429-F931-405f-9938-928E22C90BFA}"
+
+// }} ""
+// {{ 35 1 0 "fe1b1efb_48cc_4fc9_afe4b83b85c6593c" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+/* {{ 1 "" "1" */ } /* }} "" */
+// {{ 36 1 0 "caf76ab7_13fa_419a_9233a26975b52ce5" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (_rtnGitState == 2)
+{
+// }} ""
+// {{ 37 1 0 "d2f82440_f2d4_4a15_a99a21280970ff69" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 38 1 0 "38addc41_d52b_4e22_a66ad8e2ea1047e9" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+TrcTrace(Translate("## The method is currently behind the latest github commit"), Translate(""));
+// }} ""
+// {{{ 39 1 0 "4a2bc1f2_fd1f_4f5d_be28f3792104c51e" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+TrcTrace(Translate("## Please update the method and try again"), Translate(""));
+// }} ""
+// {{ 40 1 0 "ad5dc074_30a2_4227_b77b339742b7d0ce" "{930D6C31-8EFB-11d4-A3BA-002035848439}"
+abort;
+// }} ""
+// {{ 41 1 0 "caf76ab7_13fa_419a_9233a26975b52ce5" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+else
+{
+// }} ""
+// {{ 42 1 0 "34e7d147_9723_43ac_9f4ec201259ffae6" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (_rtnGitState == 0)
+{
+// }} ""
+// {{ 43 1 0 "fe0def77_0948_4fcd_a4160af9a500bfb1" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 44 1 0 "97d44239_3f55_4847_897d13a13e3b5c98" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+TrcTrace(Translate("## the current method is correct"), Translate(""));
+// }} ""
+// {{ 45 1 0 "34e7d147_9723_43ac_9f4ec201259ffae6" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+else
+{
+// }} ""
+// {{ 46 1 0 "dde5ede4_b7ae_449e_ab893fbcce7cc70c" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (_rtnGitState == 1)
+{
+// }} ""
+// {{ 47 1 0 "ca556533_d52e_4ab3_93e41d94b46951b3" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 48 1 0 "7e36b602_930c_4edc_a9ebceddac2fe84c" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+TrcTrace(Translate("## The method is currently ahead of the remote repo"), Translate(""));
+// }} ""
+// {{ 49 1 0 "dde5ede4_b7ae_449e_ab893fbcce7cc70c" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{ 50 1 0 "34e7d147_9723_43ac_9f4ec201259ffae6" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{ 51 1 0 "caf76ab7_13fa_419a_9233a26975b52ce5" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{{ 5 "GitFetch" "End"
+}
+// }} ""
+/* {{ 2 "SubmethodInsertLine" "" */ // }} ""
+// {{{ 2 "LibraryNamespace" "End"
+} // library namespace
+// }} ""
+// $$author=ch33$$valid=0$$time=2026-02-14 15:55$$checksum=b538c069$$length=083$$

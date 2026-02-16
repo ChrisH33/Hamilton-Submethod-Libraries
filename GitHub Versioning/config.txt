@@ -1,0 +1,2 @@
+GIT=C:\Users\ch33\AppData\Local\Programs\Git\cmd\git.exe
+REPO=C:\Program Files (x86)\HAMILTON\Methods\Automated-Cell-Culture-2026
