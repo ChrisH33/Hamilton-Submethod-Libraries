@@ -1,17 +1,17 @@
 
 // this ALWAYS GENERATED file contains the sub-method library header
-// Generated at 14/02/2026 15:55:03
+// Generated at 17/02/2026 08:59:34
 
 #pragma once
 #ifndef HSL_RUNTIME
 namespace GITHUB_CHECKS {
 function _InitLibrary() { }
 function _ExitLibrary() { }
-function GitFetch( variable _strGitRepo ) void { }
+function GitFetch( variable i_strGitRepo, variable i_strCurrentDir, variable i_strGitPath ) void { }
 } // namespace
 #endif
 
 #ifdef HSL_RUNTIME
 #include __filename__ ".hsi"
 #endif
-// $$author=ch33$$valid=0$$time=2026-02-14 15:55$$checksum=3f8f99c3$$length=081$$
+// $$author=ch33$$valid=0$$time=2026-02-17 08:59$$checksum=4cb3299c$$length=081$$
