@@ -6,6 +6,7 @@
 #include "HSLStrLib.hsl"
 #include "HSLTimLib.hsl"
 #include "HSLML_STARLib.hsl"
+#include "HSLEmailUtilLib\\HSLEmailUtilLib.hsl"
 /* {{ 2 "LibraryInsertLine" "" */ // }} ""
 // {{ 2 "TemplateIncludeBlock" ""
 #include "HSLMETEDLib.hs_"
@@ -15,9 +16,13 @@
 // {{{ 2 "LibraryNamespace" "Begin"
 namespace SLACKMESSENGER_V2 {
 // }} ""
+variable blnEmail;
+variable blnSlack;
+variable strEmailAddress;
 /* {{ 2 "VariableInsertLine" "" */ // }} ""
 // {{{ 2 "SubmethodForwardDeclaration" ""
-function SendUpdate( device & ML_STAR, variable i_strMessage ) void ;
+function SelectMessagingPlatform( variable intDefaultOption ) void ;
+function SendUpdate( device & ML_STAR, variable i_strSlackMessage ) void ;
 private function _Abstract(  ) void ;
 private function _GetTimeStamp(  ) variable ;
 private function _GetUploadDir( variable i_strDir ) variable ;
@@ -43,7 +48,7 @@ function _ExitLibrary() {
 // }} ""
 }
 // {{{ 5 "SendUpdate" "Begin"
-function SendUpdate( device & ML_STAR, variable i_strMessage ) void {
+function SendUpdate( device & ML_STAR, variable i_strSlackMessage ) void {
 // }} ""
 private variable _strMethod;
 private file _hnd;
@@ -55,54 +60,61 @@ private variable _strTimeStamp;
 private variable _blnSim;
 // {{ 5 "SendUpdate" "InitLocals"
 // }} ""
-// {{ 1 1 0 "391e866e_4673_44c6_9ddce9da15cce08f" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+// {{ 29 1 0 "391e866e_4673_44c6_9ddce9da15cce08f" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
 
 // }} ""
-// {{{ 2 1 0 "1c17475f_177a_479c_9bb37a8e45649852" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+// {{{ 30 1 0 "1c17475f_177a_479c_9bb37a8e45649852" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
 _blnSim = HSLML_STAR::IsSimulatorMode(ML_STAR);
 // }} ""
 if (_blnSim == 1){
    Trace("[SlackMes] -- Device in sim mode; no update");
    return;
 }
-// {{ 4 1 0 "a091b263_81dd_41ed_98007ed2d9950325" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+// {{ 32 1 0 "bb711ce4_8dfd_4ef3_8fa7ca7e98fdd80f" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
 
 // }} ""
-// {{{ 5 1 0 "8fcbd6ae_0850_4ed6_b34ace44a1da3a07" "{7C4EF7A7-39BE-406a-897F-71F3A35B4093}"
+// {{ 33 1 0 "6bf508bf_8ee9_44bb_a9f1af7c997e3854" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (blnSlack == 1)
+{
+// }} ""
+// {{ 34 1 0 "88f72736_d457_4478_af71748c744503ae" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{{ 35 1 0 "8f08f5b8_c13b_4996_a9c8937b214f02e6" "{7C4EF7A7-39BE-406a-897F-71F3A35B4093}"
 _strDirPath = _GetUploadDir(Translate(":\\0.051 Research & Development\\Instrumentation\\SlackUpdates"));
 // }} ""
 if (_strDirPath == ""){
    Trace("[SlackMes] -- Failed to locate/access the upload directory");
    return;
 }
-// {{ 7 1 0 "82acc0f0_a2da_4163_a4cf92bec4e3faa9" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+// {{ 37 1 0 "7088cac7_9f84_4c99_bd31ead8c063a146" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
 
 // }} ""
-// {{{ 8 1 0 "9001c0a8_8c31_4b21_ae6ae071af706aee" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+// {{{ 38 1 0 "91595959_b770_43e7_9b74ce0a475214c4" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
 _strSN = GetSN(ML_STAR, 0);
 // }} ""
-// {{{ 9 1 0 "4fab79e0_9dad_4375_900f78cc60b2e2fd" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+// {{{ 39 1 0 "715680c8_ba59_4b8d_894b850321581ec4" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
 _strFilePath = StrConcat4(_strDirPath, Translate("\\"), _strSN, Translate("_Update.txt"));
 // }} ""
-// {{ 10 1 0 "9e2ecf46_394a_4133_855aae7e310187a4" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+// {{ 40 1 0 "9dfc7471_59f7_407a_9f39653ff4471401" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
 
 // }} ""
-// {{{ 11 1 0 "685cf0c4_4339_4c71_9336fbdd44587676" "{7C4EF7A7-39BE-406a-897F-71F3A35B4093}"
+// {{{ 41 1 0 "ceb60641_1272_4e21_bd3a80e0e3b8b905" "{7C4EF7A7-39BE-406a-897F-71F3A35B4093}"
 _strTimeStamp = _GetTimeStamp();
 // }} ""
-// {{ 12 1 0 "52e34f63_5077_49a0_adb5b0e6ea2f8bcd" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+// {{ 42 1 0 "536ba1ec_514b_4bca_a7baffc200a286fc" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
 
 // }} ""
-// {{{ 13 1 0 "0ac7a20a_5788_4b06_be773a953c58581f" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+// {{{ 43 1 0 "58f62fd4_71bc_4e83_987ef25d9c01def5" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
 _strMethod = GetMethodName(0);
 // }} ""
-// {{ 14 1 0 "f84a0561_05a3_46c3_8376d6b77edd208a" "{3293659E-F71E-472f-AFB4-6A674E32B114}"
-onerror goto errLabel_2EBBF5DEE1CE4a2684455D43B4EDB18A ;
+// {{ 44 1 0 "a78af1b2_20d2_4cb1_8c214f3ef43b131b" "{3293659E-F71E-472f-AFB4-6A674E32B114}"
+onerror goto errLabel_1CE81AD2C2724aa4BF407E2D387A9162 ;
 err.Clear();
 // }} ""
-// {{ 15 1 0 "6627fa8b_c282_4613_a7ef8aa7a66dbbb2" "{B31F3534-5D80-11d4-A5EB-0050DA737D89}"
+// {{ 45 1 0 "cbf33110_b0cf_4123_96c4a110a43fd246" "{B31F3534-5D80-11d4-A5EB-0050DA737D89}"
 _hnd.AddField("Instrument", _strSN, hslString, 255);
-_hnd.AddField("State", i_strMessage, hslString, 255);
+_hnd.AddField("State", i_strSlackMessage, hslString, 255);
 _hnd.AddField("Method", _strMethod, hslString, 255);
 _hnd.AddField("UpdateTime", _strTimeStamp, hslString, 255);
 _hnd.SetDelimiter(hslCSVDelimited);
@@ -111,41 +123,57 @@ if( 0 == _hnd.Open(_strFilePath, hslWrite) )
     MECC::RaiseRuntimeErrorEx(-1523711743, MECC::IDS::stepNameFileOpen, MECC::IDS::errorStepFileOpenFailed, _strFilePath, "HxMetEdCompCmd");
 }
 // }} ""
-// {{ 16 1 0 "5c315ad4_5a1d_4273_a3c112b382052fbb" "{B31F3537-5D80-11d4-A5EB-0050DA737D89}"
+// {{ 46 1 0 "d4364419_866c_42cd_ba68161aa881ef64" "{B31F3537-5D80-11d4-A5EB-0050DA737D89}"
 if( 0 == _hnd.WriteRecord() )
 {
     MECC::RaiseRuntimeErrorEx(-1473380096, MECC::IDS::stepNameFileWrite, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
 }
 // }} ""
-// {{ 17 1 0 "eaac642a_7567_485d_ad9841832e0deb44" "{B31F3538-5D80-11d4-A5EB-0050DA737D89}"
+// {{ 47 1 0 "062f2990_087e_4a8f_bec347e5d59c6520" "{B31F3538-5D80-11d4-A5EB-0050DA737D89}"
 if( 0 != _hnd.Close() )
 {
     MECC::RaiseRuntimeErrorEx(-1456602880, MECC::IDS::stepNameFileClose, MECC::IDS::errorStepFailed, "", "HxMetEdCompCmd");
 }
 _hnd.RemoveFields();
 // }} ""
-// {{ 18 1 0 "f84a0561_05a3_46c3_8376d6b77edd208a" "{3293659E-F71E-472f-AFB4-6A674E32B114}"
-errLabel_2EBBF5DEE1CE4a2684455D43B4EDB18A : {}
+// {{ 48 1 0 "a78af1b2_20d2_4cb1_8c214f3ef43b131b" "{3293659E-F71E-472f-AFB4-6A674E32B114}"
+errLabel_1CE81AD2C2724aa4BF407E2D387A9162 : {}
 onerror goto 0;
 if (err.GetId() != 0)   /* skip handler if no error */
 {
 // }} ""
 Trace("[SlackMes] -- Failed to create update file");
 return;
-// {{ 20 1 0 "f84a0561_05a3_46c3_8376d6b77edd208a" "{3293659E-F71E-472f-AFB4-6A674E32B114}"
+// {{ 50 1 0 "a78af1b2_20d2_4cb1_8c214f3ef43b131b" "{3293659E-F71E-472f-AFB4-6A674E32B114}"
 }   /* end if from skip handler if no error */
 // }} ""
-// {{ 21 1 0 "e509c7b0_c9b2_4ede_8dae0ffbc622553a" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+// {{ 51 1 0 "144a6482_99e7_479b_8b6282f4eb5d1220" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
 
 // }} ""
-// {{{ 22 1 0 "6e1c4a84_4fc6_48e4_95a3d628d9eecf21" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+// {{{ 52 1 0 "05e02a00_a14c_410a_9545740b3237c4a5" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
 _strSchemaPath = StrConcat2(_strDirPath, Translate("\\schema.ini"));
 // }} ""
-// {{{ 23 1 0 "b71b0590_c085_4af9_9da4cb5205af4c8c" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+// {{{ 53 1 0 "df033874_ed70_4f54_8d3ab74450818456" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
 FileDirectoryLib::DeleteFile(_strSchemaPath);
 // }} ""
 Trace("[SlackMes] -- Successfully sent Slack update to ", _strDirPath);
 return;
+// {{ 55 1 0 "6bf508bf_8ee9_44bb_a9f1af7c997e3854" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{ 56 1 0 "c8c4326d_9bda_4c1f_8e17d37245b437db" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 57 1 0 "ce47c31e_fe53_4d97_a3ec35cfbadcd0c8" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (blnEmail == 1)
+{
+// }} ""
+// {{{ 58 1 0 "cee04c94_fc07_4fc3_9cdca1f32c477252" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+EmailUtilLib::SendEMail(strEmailAddress, Translate("Hamilton Intervention Required"), Translate("Hi, please be aware that your Hamilton run requires attention"));
+// }} ""
+// {{ 59 1 0 "ce47c31e_fe53_4d97_a3ec35cfbadcd0c8" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
 // {{{ 5 "SendUpdate" "End"
 }
 // }} ""
@@ -154,10 +182,7 @@ private function _Abstract(  ) void {
 // }} ""
 // {{ 5 "_Abstract" "InitLocals"
 // }} ""
-// {{ 26 1 0 "31910395_8431_463d_8de69fea431d29dd" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
-
-// }} ""
-// {{ 27 1 0 "5d2aecf6_fba5_4cf0_9c9345d4007448bb" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+// {{ 61 1 0 "65a71a6c_805a_467a_8b3496b4e319cd87" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
 
 // }} ""
 // {{{ 5 "_Abstract" "End"
@@ -171,16 +196,16 @@ private variable _strTime;
 private variable _strDate;
 // {{ 5 "_GetTimeStamp" "InitLocals"
 // }} ""
-// {{{ 29 1 0 "6fd9c7a9_a5a4_425d_829e5da1ce40818d" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+// {{{ 63 1 0 "6fd9c7a9_a5a4_425d_829e5da1ce40818d" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
 _strTime = TimGetFormattedTime(Translate("%H:%M"));
 // }} ""
-// {{{ 30 1 0 "2c890d02_a131_42af_9d1c64462453020e" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+// {{{ 64 1 0 "2c890d02_a131_42af_9d1c64462453020e" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
 _strDate = TimGetFormattedDate(Translate("%d/%m/%y"));
 // }} ""
-// {{{ 31 1 0 "776171a1_97c7_4272_84f6946d36eb72a4" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+// {{{ 65 1 0 "776171a1_97c7_4272_84f6946d36eb72a4" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
 _strTimeStamp = StrConcat4(_strTime, Translate(" "), _strDate, Translate(""));
 // }} ""
-// {{{ 32 1 0 "cc6728e6_0a77_4798_816315b44f82d54c" "{9EC997CD-FD3B-4280-811B-49E99DCF062C}"
+// {{{ 66 1 0 "cc6728e6_0a77_4798_816315b44f82d54c" "{9EC997CD-FD3B-4280-811B-49E99DCF062C}"
 return (_strTimeStamp);
 // }} ""
 // {{{ 5 "_GetTimeStamp" "End"
@@ -199,13 +224,13 @@ private variable _strFilePath;
 private variable _blnExists;
 // {{ 5 "_GetUploadDir" "InitLocals"
 // }} ""
-// {{ 34 1 0 "7fca2a72_b5be_4626_ae0b3ba44221e05a" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+// {{ 68 1 0 "7fca2a72_b5be_4626_ae0b3ba44221e05a" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
 
 // }} ""
-// {{ 35 1 0 "bfa7f6c2_151f_4136_8e4e0a896b5834ee" "{4900C1F7-0FB7-4033-8253-760BDB9354DC}"
+// {{ 69 1 0 "bfa7f6c2_151f_4136_8e4e0a896b5834ee" "{4900C1F7-0FB7-4033-8253-760BDB9354DC}"
 _arrAlphabet.SetSize(0);
 // }} ""
-// {{ 36 1 0 "d5330c99_fe9e_4247_be66046382a3ba5d" "{586C3429-F931-405f-9938-928E22C90BFA}"
+// {{ 70 1 0 "d5330c99_fe9e_4247_be66046382a3ba5d" "{586C3429-F931-405f-9938-928E22C90BFA}"
 
 // }} ""
 _arrAlphabet.AddAsLast(Translate("A"));
@@ -234,77 +259,188 @@ _arrAlphabet.AddAsLast(Translate("W"));
 _arrAlphabet.AddAsLast(Translate("X"));
 _arrAlphabet.AddAsLast(Translate("Y"));
 _arrAlphabet.AddAsLast(Translate("Z"));
-// {{ 38 1 0 "d5330c99_fe9e_4247_be66046382a3ba5d" "{586C3429-F931-405f-9938-928E22C90BFA}"
+// {{ 72 1 0 "d5330c99_fe9e_4247_be66046382a3ba5d" "{586C3429-F931-405f-9938-928E22C90BFA}"
 
 // }} ""
-// {{ 39 1 0 "d5a6cd98_a528_4997_b208cbdd6eb40c48" "{72EACF88-8D49-43e3-92C8-2F90E81E3260}"
+// {{ 73 1 0 "d5a6cd98_a528_4997_b208cbdd6eb40c48" "{72EACF88-8D49-43e3-92C8-2F90E81E3260}"
 _intAlphabetSize=_arrAlphabet.GetSize();
 // }} ""
-// {{ 40 1 0 "578b1226_d428_4a93_87a13baec8564394" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+// {{ 74 1 0 "578b1226_d428_4a93_87a13baec8564394" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
 
 // }} ""
-// {{ 41 1 0 "7b887a57_c558_453a_af4ede847d2bd68a" "{4900C1F7-0FB7-4033-8253-760BDB9354DC}"
+// {{ 75 1 0 "7b887a57_c558_453a_af4ede847d2bd68a" "{4900C1F7-0FB7-4033-8253-760BDB9354DC}"
 _arrPossibleDirPaths.SetSize(0);
 // }} ""
-// {{ 42 1 0 "5880fc75_5e97_471b_8d101b8f8e584f39" "{B31F3532-5D80-11d4-A5EB-0050DA737D89}"
+// {{ 76 1 0 "5880fc75_5e97_471b_8d101b8f8e584f39" "{B31F3532-5D80-11d4-A5EB-0050DA737D89}"
 {
 for(loopCounter2 = 0; loopCounter2 < _intAlphabetSize;)
 {
 loopCounter2 = loopCounter2 + 1;
 // }} ""
-// {{{ 43 1 0 "c26c2673_0e84_43fd_9c5fd6f2999640ea" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+// {{{ 77 1 0 "c26c2673_0e84_43fd_9c5fd6f2999640ea" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
 _strDirPath = StrConcat2(_arrAlphabet.ElementAt( loopCounter2 -1), i_strDir);
 // }} ""
-// {{ 44 1 0 "d7c76ca7_3fcd_44d6_921e1ddbf32b2ecc" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+// {{ 78 1 0 "d7c76ca7_3fcd_44d6_921e1ddbf32b2ecc" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
 
 // }} ""
-// {{{ 45 1 0 "ade480a5_c6a6_45d8_9e7921c9d84be5dc" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+// {{{ 79 1 0 "ade480a5_c6a6_45d8_9e7921c9d84be5dc" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
 _blnExists = FileDirectoryLib::CheckIfDirectoryExists(_strDirPath);
 // }} ""
-// {{ 46 1 0 "fd9801d1_7976_4903_87e77ac021d03489" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+// {{ 80 1 0 "fd9801d1_7976_4903_87e77ac021d03489" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
 if (_blnExists == 1)
 {
 // }} ""
-// {{ 47 1 0 "39790b5c_5689_4e0b_8ec05ae81ee93cfb" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+// {{ 81 1 0 "39790b5c_5689_4e0b_8ec05ae81ee93cfb" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
 
 // }} ""
-// {{{ 48 1 0 "0ffbd675_d6c9_4cb9_85db82bebb774396" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+// {{{ 82 1 0 "0ffbd675_d6c9_4cb9_85db82bebb774396" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
 _strFilePath = StrConcat2(_strDirPath, Translate("\\Important_DoNotDelete.bmp"));
 // }} ""
-// {{{ 49 1 0 "bba1c82f_e300_40fe_8a106210ddf545bb" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+// {{{ 83 1 0 "bba1c82f_e300_40fe_8a106210ddf545bb" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
 _blnExists = FileDirectoryLib::CheckIfFileExists(_strFilePath);
 // }} ""
-// {{ 50 1 0 "a63697b9_b280_4367_9172181f0d940e6b" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+// {{ 84 1 0 "a63697b9_b280_4367_9172181f0d940e6b" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
 if (_blnExists == 1)
 {
 // }} ""
-// {{ 51 1 0 "e3058317_5a86_4969_b4009a6632bde392" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+// {{ 85 1 0 "e3058317_5a86_4969_b4009a6632bde392" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
 
 // }} ""
-// {{{ 52 1 0 "31428062_547b_47f9_af10fdd9ac7b84a6" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+// {{{ 86 1 0 "31428062_547b_47f9_af10fdd9ac7b84a6" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
 _strDirSubpath = StrConcat2(_strDirPath, Translate("\\Upload"));
 // }} ""
-// {{{ 53 1 0 "ee625836_958a_44df_b300c3a87c0a6129" "{9EC997CD-FD3B-4280-811B-49E99DCF062C}"
+// {{{ 87 1 0 "ee625836_958a_44df_b300c3a87c0a6129" "{9EC997CD-FD3B-4280-811B-49E99DCF062C}"
 return (_strDirSubpath);
 // }} ""
-// {{ 54 1 0 "a63697b9_b280_4367_9172181f0d940e6b" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+// {{ 88 1 0 "a63697b9_b280_4367_9172181f0d940e6b" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
 }
 // }} ""
-// {{ 55 1 0 "fd9801d1_7976_4903_87e77ac021d03489" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+// {{ 89 1 0 "fd9801d1_7976_4903_87e77ac021d03489" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
 }
 // }} ""
-// {{ 56 1 0 "5880fc75_5e97_471b_8d101b8f8e584f39" "{B31F3532-5D80-11d4-A5EB-0050DA737D89}"
+// {{ 90 1 0 "5880fc75_5e97_471b_8d101b8f8e584f39" "{B31F3532-5D80-11d4-A5EB-0050DA737D89}"
 }
 }
 // }} ""
-// {{{ 57 1 0 "b682fbe1_22dd_4bbe_843098db12ef4625" "{9EC997CD-FD3B-4280-811B-49E99DCF062C}"
+// {{{ 91 1 0 "b682fbe1_22dd_4bbe_843098db12ef4625" "{9EC997CD-FD3B-4280-811B-49E99DCF062C}"
 return (Translate(""));
 // }} ""
 // {{{ 5 "_GetUploadDir" "End"
+}
+// }} ""
+// {{{ 5 "SelectMessagingPlatform" "Begin"
+function SelectMessagingPlatform( variable intDefaultOption ) void {
+// }} ""
+private dialog customDialog955F5339CA964c43A6FD711DF9C6F9A0;
+private variable rtnValue;
+private variable blnNone;
+// {{ 5 "SelectMessagingPlatform" "InitLocals"
+// }} ""
+// {{ 1 1 0 "cfe297dc_bd67_4c0f_9d35546aa29a17b1" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 2 1 0 "a4071413_a219_4507_b16ae8ae99debb2f" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (intDefaultOption == 1)
+{
+// }} ""
+// {{ 3 1 0 "cbbf4625_c18b_4ecb_998cacb138b1c5ff" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 4 1 0 "b6537ac8_67aa_48d6_9b35d6d3f569a663" "{B31F3543-5D80-11d4-A5EB-0050DA737D89}"
+blnSlack = 1;
+// }} ""
+// {{ 5 1 0 "a4071413_a219_4507_b16ae8ae99debb2f" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+else
+{
+// }} ""
+// {{ 6 1 0 "cf505fe2_b519_4989_94eb5ee724fb0501" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (intDefaultOption == 2)
+{
+// }} ""
+// {{ 7 1 0 "892dee61_b7b7_4347_8e18e93ca9e5a202" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 8 1 0 "2571ff30_993f_4fca_ba3ea0084c8f2cc0" "{B31F3543-5D80-11d4-A5EB-0050DA737D89}"
+blnEmail = 1;
+// }} ""
+// {{ 9 1 0 "cf505fe2_b519_4989_94eb5ee724fb0501" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{ 10 1 0 "a4071413_a219_4507_b16ae8ae99debb2f" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{ 11 1 0 "0cfc3f35_5af6_4d27_a6b6494831b6bf9b" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 12 1 0 "11a131fb_fba2_4b95_9ef7e9d079e826d2" "{998A7CCC-4374-484D-A6ED-E8A4F0EB71BA}"
+customDialog955F5339CA964c43A6FD711DF9C6F9A0.InitCustomDialog( "11a131fb_fba2_4b95_9ef7e9d079e826d2" );
+customDialog955F5339CA964c43A6FD711DF9C6F9A0.SetCustomDialogProperty( "radioButton1.IsChecked", blnSlack );
+customDialog955F5339CA964c43A6FD711DF9C6F9A0.SetCustomDialogProperty( "radioButton3.IsChecked", blnEmail );
+customDialog955F5339CA964c43A6FD711DF9C6F9A0.SetCustomDialogProperty( "radioButton2.IsChecked", blnNone );
+customDialog955F5339CA964c43A6FD711DF9C6F9A0.ShowCustomDialog();
+rtnValue = customDialog955F5339CA964c43A6FD711DF9C6F9A0.GetCustomDialogProperty( "ReturnValue" );
+blnSlack = customDialog955F5339CA964c43A6FD711DF9C6F9A0.GetCustomDialogProperty( "radioButton1.IsChecked" );
+blnEmail = customDialog955F5339CA964c43A6FD711DF9C6F9A0.GetCustomDialogProperty( "radioButton3.IsChecked" );
+strEmailAddress = customDialog955F5339CA964c43A6FD711DF9C6F9A0.GetCustomDialogProperty( "textBox1.Text" );
+blnNone = customDialog955F5339CA964c43A6FD711DF9C6F9A0.GetCustomDialogProperty( "radioButton2.IsChecked" );
+// }} ""
+// {{ 13 1 0 "877001ff_e75f_4f38_bf6b6a554af06ec8" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (rtnValue == 2)
+{
+// }} ""
+// {{ 14 1 0 "f58ac7b2_ffbc_4d74_a9000a3a1762ba9e" "{930D6C31-8EFB-11d4-A3BA-002035848439}"
+abort;
+// }} ""
+// {{ 15 1 0 "877001ff_e75f_4f38_bf6b6a554af06ec8" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{ 16 1 0 "67e6f9e5_eede_43df_a05c7e634345aea8" "{F07B0071-8EFC-11d4-A3BA-002035848439}"
+
+// }} ""
+// {{ 17 1 0 "f2bde38a_1d5a_4dea_94ed18829c440d9b" "{586C3429-F931-405f-9938-928E22C90BFA}"
+
+// }} ""
+// {{ 18 1 0 "638ac2af_6d52_4dc3_ba3a84c5b58494ac" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+if (blnEmail == 1)
+{
+// }} ""
+// {{{ 19 1 0 "8aa2efc0_2bb7_4498_be59fb4bb0ae2337" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+EmailUtilLib::SetSMTPServerHostName(Translate("mail.internal.sanger.ac.uk"));
+// }} ""
+// {{{ 20 1 0 "43535754_5320_4c8f_9d35dabc2dc6d83e" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+EmailUtilLib::SetEMailAddressOfSender(Translate("Hamilton@sanger.ac.uk"));
+// }} ""
+// {{ 21 1 0 "2e2c4103_0022_4475_b14f1568be956419" "{3293659E-F71E-472f-AFB4-6A674E32B114}"
+onerror goto errLabel_E954A31010EE40a1AE3E43DF9F1C91BD ;
+err.Clear();
+// }} ""
+// {{{ 22 1 0 "aa2f5e14_5e3d_47d4_86e00af5fb5e1d09" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+EmailUtilLib::ChangeRecieverAddress(strEmailAddress);
+// }} ""
+// {{ 23 1 0 "2e2c4103_0022_4475_b14f1568be956419" "{3293659E-F71E-472f-AFB4-6A674E32B114}"
+errLabel_E954A31010EE40a1AE3E43DF9F1C91BD : {}
+onerror goto 0;
+if (err.GetId() != 0)   /* skip handler if no error */
+{
+// }} ""
+// {{{ 24 1 0 "b3bcc352_e504_448f_8e80841cfabacb0d" "{C1F3C015-47B3-4514-9407-AC2E65043419}"
+EmailUtilLib::ChangeRecieverAddress(Translate("ch33@sanger.ac.uk"));
+// }} ""
+// {{ 25 1 0 "2e2c4103_0022_4475_b14f1568be956419" "{3293659E-F71E-472f-AFB4-6A674E32B114}"
+}   /* end if from skip handler if no error */
+// }} ""
+// {{ 26 1 0 "638ac2af_6d52_4dc3_ba3a84c5b58494ac" "{B31F3531-5D80-11d4-A5EB-0050DA737D89}"
+}
+// }} ""
+// {{ 27 1 0 "f2bde38a_1d5a_4dea_94ed18829c440d9b" "{586C3429-F931-405f-9938-928E22C90BFA}"
+
+// }} ""
+// {{{ 5 "SelectMessagingPlatform" "End"
 }
 // }} ""
 /* {{ 2 "SubmethodInsertLine" "" */ // }} ""
 // {{{ 2 "LibraryNamespace" "End"
 } // library namespace
 // }} ""
-// $$author=ch33$$valid=0$$time=2026-02-17 11:19$$checksum=c4ce6480$$length=083$$
+// $$author=ch33$$valid=0$$time=2026-03-18 09:09$$checksum=567ceddc$$length=083$$
